@@ -14,6 +14,9 @@ body {
     background: linear-gradient(135deg, #f0f7ff 0%, #e8f0ff 50%, #f5f8ff 100%);
     -webkit-font-smoothing: antialiased;
     color: #111;
+    /* Optimasi scrolling untuk performa lebih baik */
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
 }
 
 /* --- DESKTOP NAVBAR STYLES  --- */
@@ -59,7 +62,8 @@ body {
     z-index: 1000;
     bottom: 1rem;
     left: 50%; 
-    transform: translateX(-50%); 
+    transform: translate3d(-50%, 0, 0);
+    -webkit-transform: translate3d(-50%, 0, 0);
 
     /* Sizing */
     width: calc(100% - 2rem); 
@@ -73,6 +77,8 @@ body {
     padding: 0.6rem 0;
     border-radius: 50px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+    /* Hardware acceleration */
+    will-change: transform;
 }
 
 .mobile-nav-item {
@@ -119,14 +125,28 @@ body {
     box-shadow: 0 12px 40px rgba(20,20,40,0.06);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     color: #111;
+    /* Hardware acceleration untuk performa lebih baik */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .card:hover,
 .stat-card:hover,
 .portfolio-card:hover,
 .pricing-card:hover {
-    transform: translateY(-6px);
+    transform: translate3d(0, -6px, 0);
     box-shadow: 0 18px 50px rgba(20,20,40,0.09);
+}
+
+/* Optimasi untuk touch devices - tidak ada hover */
+@media (hover: none) and (pointer: coarse) {
+    .card:hover,
+    .stat-card:hover,
+    .portfolio-card:hover,
+    .pricing-card:hover {
+        transform: none;
+        box-shadow: 0 12px 40px rgba(20,20,40,0.06);
+    }
 }
 
 .stat-card .icon-wrapper {
@@ -140,6 +160,9 @@ body {
     border-radius: 50%;
     font-size: 1.75rem;
     backdrop-filter: blur(6px);
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
         
 
@@ -147,6 +170,101 @@ body {
 @media (max-width: 991.98px) {
     body {
         padding-bottom: 90px; 
+    }
+    
+    /* Optimasi performa untuk mobile - mengurangi backdrop-filter */
+    .navbar-custom,
+    .mobile-bottom-navbar,
+    .card,
+    .stat-card,
+    .pricing-card,
+    .portfolio-card,
+    .testimonial-card,
+    .info-card,
+    .cta-card {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+    
+    /* Mengurangi box-shadow untuk performa lebih baik */
+    .card,
+    .stat-card,
+    .pricing-card,
+    .portfolio-card,
+    .testimonial-card,
+    .info-card,
+    .cta-card {
+        box-shadow: 0 4px 15px rgba(20,20,40,0.04);
+    }
+    
+    /* Menonaktifkan hover effects di mobile */
+    .card:hover,
+    .stat-card:hover,
+    .portfolio-card:hover,
+    .pricing-card:hover {
+        transform: none;
+        box-shadow: 0 4px 15px rgba(20,20,40,0.04);
+    }
+    
+    /* Optimasi hero section */
+    .hero-section {
+        will-change: auto;
+        transform: translateZ(0);
+    }
+    
+    /* Optimasi stat card */
+    .stat-card {
+        will-change: auto;
+    }
+    
+    /* Optimasi service icon */
+    .service-icon {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+    
+    /* Optimasi portfolio card */
+    .portfolio-card .card-img-top {
+        will-change: auto;
+    }
+    
+    /* Optimasi pricing card */
+    .pricing-card {
+        will-change: auto;
+    }
+    
+    /* Menonaktifkan animasi rocket di mobile untuk performa */
+    .rocket-icon {
+        animation: none;
+    }
+    
+    .rocket-trail {
+        animation: none;
+    }
+    
+    .speed-line {
+        animation: none;
+        display: none;
+    }
+    
+    /* Optimasi metric box */
+    .metric-box {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+    
+    /* Optimasi contact form */
+    .contact-form .form-control,
+    .contact-form .form-select,
+    .contact-form .input-group-text {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+    
+    /* Optimasi floating nugget */
+    .floating-nugget {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 }
 
@@ -156,6 +274,9 @@ body {
     background: linear-gradient(180deg, rgba(232,245,255,0.6) 0%, rgba(255,255,255,0.2) 70%);
     margin-top: -5rem;
     z-index: 1;
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
         
 .hero-section .display-6{
@@ -189,8 +310,14 @@ body {
     box-shadow: 0 8px 30px rgba(24,167,210,0.12);
 }
 .btn-primary-custom:hover{
-    transform: translateY(-3px);
+    transform: translate3d(0, -3px, 0);
     box-shadow: 0 18px 40px rgba(24,167,210,0.12);
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .btn-primary-custom:hover {
+        transform: none;
+    }
 }
 .hero-illustration {
     max-width: 80%; 
@@ -223,11 +350,21 @@ body {
     position: relative;
     overflow: hidden;
     transition: all 0.25s ease;
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .process-item:hover {
-    transform: translateY(-4px);
+    transform: translate3d(0, -4px, 0);
     box-shadow: 0 14px 36px rgba(20,20,40,0.06);
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .process-item:hover {
+        transform: none;
+        box-shadow: none;
+    }
 }
 
 /* Trik untuk membuat angka di background */
@@ -330,11 +467,20 @@ body {
 .portfolio-card .card-img-top {
     transition: transform 0.4s ease;
     height: 220px; 
-    object-fit: cover; 
+    object-fit: cover;
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .portfolio-card:hover .card-img-top {
-    transform: scale(1.05); 
+    transform: translate3d(0, 0, 0) scale(1.05); 
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .portfolio-card:hover .card-img-top {
+        transform: none;
+    }
 }
 
 .portfolio-category {
@@ -375,12 +521,18 @@ body {
     background: linear-gradient(180deg, var(--primary-color), var(--primary-color-2));
     color: #ffffff;
     border: none;
-    transform: scale(1.03);
+    transform: translateZ(0) scale(1.03);
     z-index: 10;
 }
 
 .highlighted-plan:hover {
-    transform: scale(1.05);
+    transform: translate3d(0, 0, 0) scale(1.05);
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .highlighted-plan:hover {
+        transform: translateZ(0) scale(1.03);
+    }
 }
 
 .highlighted-plan .price-amount,
@@ -641,29 +793,35 @@ section[id] { scroll-margin-top: 100px; }
     z-index: 2;
     animation: rocketFloat 3s ease-in-out infinite;
     filter: drop-shadow(0 10px 20px rgba(24,167,210,0.2));
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
 }
 
 @keyframes rocketFloat {
-    0%, 100% { transform: translateY(0) rotate(-5deg); }
-    50% { transform: translateY(-15px) rotate(5deg); }
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(-5deg); }
+    50% { transform: translate3d(0, -15px, 0) rotate(5deg); }
 }
 
 .rocket-trail {
     position: absolute;
     bottom: 20%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
+    -webkit-transform: translate3d(-50%, 0, 0);
     width: 120px;
     height: 80px;
     background: linear-gradient(180deg, rgba(99,74,226,0.3) 0%, rgba(24,167,210,0.2) 50%, transparent 100%);
     border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
     z-index: 1;
     animation: trailPulse 2s ease-in-out infinite;
+    will-change: transform, opacity;
 }
 
 @keyframes trailPulse {
-    0%, 100% { opacity: 0.6; transform: translateX(-50%) scaleY(1); }
-    50% { opacity: 0.9; transform: translateX(-50%) scaleY(1.2); }
+    0%, 100% { opacity: 0.6; transform: translate3d(-50%, 0, 0) scaleY(1); }
+    50% { opacity: 0.9; transform: translate3d(-50%, 0, 0) scaleY(1.2); }
 }
 
 .speed-lines {
@@ -701,9 +859,9 @@ section[id] { scroll-margin-top: 100px; }
 }
 
 @keyframes speedLine {
-    0% { transform: translateY(-100px) scaleY(0); opacity: 0; }
+    0% { transform: translate3d(0, -100px, 0) scaleY(0); opacity: 0; }
     50% { opacity: 1; }
-    100% { transform: translateY(200px) scaleY(1); opacity: 0; }
+    100% { transform: translate3d(0, 200px, 0) scaleY(1); opacity: 0; }
 }
 
 .metric-box {
@@ -717,8 +875,14 @@ section[id] { scroll-margin-top: 100px; }
 }
 
 .metric-box:hover {
-    transform: translateY(-5px);
+    transform: translate3d(0, -5px, 0);
     box-shadow: 0 10px 30px rgba(24,167,210,0.15);
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .metric-box:hover {
+        transform: none;
+    }
 }
 
 .metric-value {
@@ -754,8 +918,14 @@ section[id] { scroll-margin-top: 100px; }
 }
 
 .loading-badge:hover {
-    transform: translateY(-3px);
+    transform: translate3d(0, -3px, 0);
     box-shadow: 0 12px 35px rgba(24,167,210,0.35);
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .loading-badge:hover {
+        transform: none;
+    }
 }
 
 .loading-badge i {
@@ -775,5 +945,29 @@ section[id] { scroll-margin-top: 100px; }
     .metric-value {
         font-size: 2rem;
     }
+    
+    /* Optimasi tambahan untuk performa scrolling */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Mengurangi kompleksitas gradient di mobile */
+    .hero-section {
+        background: rgba(232,245,255,0.4);
+    }
+    
+    .server-quality-section {
+        background: #f0f7ff;
+    }
+    
+    .server-quality-section::before {
+        display: none;
+    }
+    
+    /* Optimasi pricing section */
+    .highlighted-plan {
+        transform: translateZ(0) scale(1);
+    }
 }
+
 
