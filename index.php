@@ -428,7 +428,7 @@ include 'koneksi.php';
 
 <section id="Portofolio" class="portfolio-section py-5 bg-light">
     <div class="container">
-        <div class="row justify-content-center text-center mb-3">
+        <div class="row justify-content-center text-center mb-4">
             <div class="col-lg-8">
                 <h2 class="display-6 fw-bold">Portfolio</h2>
                 <div class="title-divider mx-auto"></div>
@@ -438,105 +438,64 @@ include 'koneksi.php';
             </div>
         </div>
 
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-4">
-                <div class="card portfolio-card h-100">
-                    <div class="portfolio-img-wrapper">
-                        <img src="assets/img/tampingan.png" class="card-img-top" alt="Proyek Web Design">
+        <!-- Portfolio Slider -->
+        <div class="portfolio-slider-wrapper">
+            <div class="swiper portfolio-slider">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="portfolio-slide-item">
+                            <img src="assets/img/tampingan.png" alt="Sistem Informasi Desa Tampingan" class="portfolio-slide-img">
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="portfolio-category">Web Development</p>
-                        <h5 class="card-title fw-bold">Sistem Informasi Desa Tampingan</h5>
-                        <p class="card-text text-muted small">Develop Sistem Informasi Desa Tampingan, Kecamatan Boja, Kabupaten Kendal, Jawa Tengah.</p>
+                    <div class="swiper-slide">
+                        <div class="portfolio-slide-item">
+                            <img src="assets/img/waylaga.png" alt="Sistem Informasi SD Negeri 4 Way Laga" class="portfolio-slide-img">
+                        </div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6 col-lg-4">
-                <div class="card portfolio-card h-100">
-                    <div class="portfolio-img-wrapper">
-                        <img src="assets/img/waylaga.png" class="card-img-top" alt="Proyek Web Design">
+                    <div class="swiper-slide">
+                        <div class="portfolio-slide-item">
+                            <img src="assets/img/mataneka.png" alt="Lulusku by Mataneka" class="portfolio-slide-img">
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="portfolio-category">Web Development</p>
-                        <h5 class="card-title fw-bold">Sistem Informasi SD Negeri 4 Way Laga</h5>
-                        <p class="card-text text-muted small">Develop Sistem Informasi SD Negeri 4 Way Laga Butuah, Bandar Lampung, Lampung.</p>
+                    <div class="swiper-slide">
+                        <div class="portfolio-slide-item">
+                            <img src="assets/img/kemusuk.png" alt="Sistem Informasi Dusun" class="portfolio-slide-img">
+                        </div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6 col-lg-4">
-                <div class="card portfolio-card h-100">
-                    <div class="portfolio-img-wrapper">
-                        <img src="assets/img/mataneka.png" class="card-img-top" alt="Proyek Web Design">
+                    <div class="swiper-slide">
+                        <div class="portfolio-slide-item">
+                            <img src="assets/img/rm.png" alt="Portal Kelulusan" class="portfolio-slide-img">
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="portfolio-category">Web Development</p>
-                        <h5 class="card-title fw-bold">Lulusku by Mataneka</h5>
-                        <p class="card-text text-muted small">Develop Aplikasi Portal Kelulusan Madrasah Tsanawiyah Negeri 1 Way Kanan Lampung, berbasis Web.</p>
+                    <div class="swiper-slide">
+                        <div class="portfolio-slide-item">
+                            <img src="assets/img/ikram.png" alt="Logo IKRAM" class="portfolio-slide-img">
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <div class="card portfolio-card h-100">
-                     <div class="portfolio-img-wrapper">
-                        <img src="assets/img/kemusuk.png" class="card-img-top" alt="Proyek Graphics">
+                    <div class="swiper-slide">
+                        <div class="portfolio-slide-item">
+                            <img src="assets/img/bannerskr.png" alt="Banner Kit" class="portfolio-slide-img">
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="portfolio-category">Web Development</p>
-                        <h5 class="card-title fw-bold">Sistem Informasi Dusun</h5>
-                        <p class="card-text text-muted small">Develop Sistem Informasi Dusun Kemusuk Kidul, Yogyakarta.</p>
+                    <div class="swiper-slide">
+                        <div class="portfolio-slide-item">
+                            <img src="assets/img/figmahimatik.png" alt="Web Himatik UAA" class="portfolio-slide-img">
+                        </div>
                     </div>
                 </div>
+                <!-- Navigation arrows -->
+                <div class="swiper-button-next portfolio-slider-next"></div>
+                <div class="swiper-button-prev portfolio-slider-prev"></div>
+                <!-- Pagination -->
+                <div class="swiper-pagination portfolio-slider-pagination"></div>
             </div>
-            <div class="col-md-6 col-lg-4">
-                <div class="card portfolio-card h-100">
-                     <div class="portfolio-img-wrapper">
-                        <img src="assets/img/rm.png" class="card-img-top" alt="Proyek Branding">
-                    </div>
-                    <div class="card-body">
-                        <p class="portfolio-category">Web Development</p>
-                        <h5 class="card-title fw-bold">Portal Kelulusan</h5>
-                        <p class="card-text text-muted small">Develop Portal Kelulusan Raudlatul Muta'allimin, Lampung..</p>
-                    </div>
-                </div>
-            </div>
-             <div class="col-md-6 col-lg-4">
-                <div class="card portfolio-card h-100">
-                     <div class="portfolio-img-wrapper">
-                        <img src="assets/img/ikram.png" class="card-img-top" alt="Proyek Web App">
-                    </div>
-                    <div class="card-body">
-                        <p class="portfolio-category">Graphics Design</p>
-                        <h5 class="card-title fw-bold">Logo IKRAM</h5>
-                        <p class="card-text text-muted small">Desain Logo Ikatan Keluarga Raudlatul Muta'allimin, Lampung.</p>
-                    </div>
-                </div>
-            </div>
-             <div class="col-md-6 col-lg-4">
-                <div class="card portfolio-card h-100">
-                     <div class="portfolio-img-wrapper">
-                        <img src="assets/img/bannerskr.png" class="card-img-top" alt="Proyek UI/UX">
-                    </div>
-                    <div class="card-body">
-                        <p class="portfolio-category">Graphics Design</p>
-                        <h5 class="card-title fw-bold">Banner Kit</h5>
-                        <p class="card-text text-muted small">Desain Banner Kit Ulang Tahun Sri Karang Rejo, Sumatera Selatan.</p>
-                    </div>
-                </div>
-            </div>
-             <div class="col-md-6 col-lg-4">
-                <div class="card portfolio-card h-100">
-                     <div class="portfolio-img-wrapper">
-                        <img src="assets/img/figmahimatik.png" class="card-img-top" alt="Proyek Motion Graphics">
-                    </div>
-                    <div class="card-body">
-                        <p class="portfolio-category">Ui Design</p>
-                        <h5 class="card-title fw-bold">Web Himatik UAA</h5>
-                        <p class="card-text text-muted small">Desain UI Website Profil HIMATIK UAA periode 2023/2024, Yogyakarta.</p>
-                    </div>
-                </div>
-            </div>
+        </div>
+
+        <!-- Button Portofolio Detail -->
+        <div class="text-center mt-5">
+            <a href="portfolio.php" class="btn btn-primary-custom btn-lg text-light px-5">
+                <i class="bi bi-grid-3x3-gap me-2"></i>Portofolio Detail
+            </a>
         </div>
     </div>
 </section>
@@ -1071,6 +1030,32 @@ include 'koneksi.php';
             },
             pagination: {
                 el: '.swiper-pagination',
+                clickable: true,
+            },
+        });
+
+        // Portfolio Slider
+        const portfolioSlider = new Swiper('.portfolio-slider', {
+            loop: true,
+            spaceBetween: 20,
+            grabCursor: true,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            slidesPerView: 1,
+            breakpoints: {
+                576: { slidesPerView: 2 },
+                768: { slidesPerView: 3 },
+                992: { slidesPerView: 4 },
+                1200: { slidesPerView: 5 }
+            },
+            navigation: {
+                nextEl: '.portfolio-slider-next',
+                prevEl: '.portfolio-slider-prev',
+            },
+            pagination: {
+                el: '.portfolio-slider-pagination',
                 clickable: true,
             },
         });

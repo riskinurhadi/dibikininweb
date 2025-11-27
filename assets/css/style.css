@@ -534,6 +534,122 @@ body {
     margin-bottom: 0.5rem;
 }
 
+/* --- PORTFOLIO SLIDER --- */
+.portfolio-slider-wrapper {
+    position: relative;
+    padding: 2rem 0;
+    margin: 2rem 0;
+}
+
+.portfolio-slider {
+    overflow: visible;
+    padding-bottom: 3rem;
+}
+
+.portfolio-slide-item {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #ffffff;
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+.portfolio-slide-item:hover {
+    transform: translate3d(0, -8px, 0);
+    box-shadow: 0 15px 40px rgba(24, 167, 210, 0.2);
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .portfolio-slide-item:hover {
+        transform: none;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.portfolio-slide-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    border-radius: 1rem;
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+/* Portfolio Slider Navigation */
+.portfolio-slider-next,
+.portfolio-slider-prev {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-2));
+    color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(24, 167, 210, 0.3);
+    transition: all 0.3s ease;
+}
+
+.portfolio-slider-next::after,
+.portfolio-slider-prev::after {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.portfolio-slider-next:hover,
+.portfolio-slider-prev:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(24, 167, 210, 0.4);
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .portfolio-slider-next:hover,
+    .portfolio-slider-prev:hover {
+        transform: none;
+    }
+}
+
+/* Portfolio Slider Pagination */
+.portfolio-slider-pagination {
+    position: relative;
+    margin-top: 2rem;
+}
+
+.portfolio-slider-pagination .swiper-pagination-bullet {
+    width: 12px;
+    height: 12px;
+    background-color: #d1d1d1;
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.portfolio-slider-pagination .swiper-pagination-bullet-active {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-2));
+    width: 30px;
+    border-radius: 6px;
+}
+
+@media (max-width: 991.98px) {
+    .portfolio-slider-wrapper {
+        padding: 1rem 0;
+        margin: 1rem 0;
+    }
+    
+    .portfolio-slider-next,
+    .portfolio-slider-prev {
+        width: 40px;
+        height: 40px;
+        display: none; /* Sembunyikan navigation arrows di mobile */
+    }
+    
+    .portfolio-slider-pagination {
+        margin-top: 1.5rem;
+    }
+}
+
 /* --- PRICING SECTION --- */
 .pricing-card h4 {
     font-size: 1.25rem;
