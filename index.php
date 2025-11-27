@@ -371,6 +371,61 @@ include 'koneksi.php';
     </div>
 </section>
 
+<section id="server-quality" class="server-quality-section py-5">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <!-- Left: Rocket Illustration -->
+            <div class="col-lg-5 text-center">
+                <div class="rocket-illustration-wrapper position-relative">
+                    <div class="rocket-icon">
+                        <i class="bi bi-rocket-takeoff-fill"></i>
+                    </div>
+                    <div class="rocket-trail"></div>
+                    <div class="speed-lines">
+                        <div class="speed-line"></div>
+                        <div class="speed-line"></div>
+                        <div class="speed-line"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Content -->
+            <div class="col-lg-7">
+                <h2 class="display-6 fw-bold mb-4" style="color: #32353a;">
+                    Server Kualitas Terbaik, Load Website Cepat
+                </h2>
+                
+                <!-- Metrics -->
+                <div class="row g-4 mb-4">
+                    <div class="col-6 col-md-4">
+                        <div class="metric-box">
+                            <div class="metric-value">99,9%</div>
+                            <div class="metric-label">UPTIME</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="metric-box">
+                            <div class="metric-value">4.9</div>
+                            <div class="metric-label">RATINGS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature Badge -->
+                <div class="loading-badge mb-4">
+                    <i class="bi bi-lightning-charge-fill me-2"></i>
+                    <span>Loading Tercepat</span>
+                </div>
+
+                <!-- Description -->
+                <p class="text-muted mb-0" style="line-height: 1.8;">
+                    Kami menggunakan server dengan kualitas terbaik, sehingga load website menjadi cepat. Dukungan teknis yang terampil, infrastruktur yang kuat, dan pemantauan proaktif dibikininweb akan memastikan bahwa website Anda tetap online tanpa gangguan.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section id="Portofolio" class="portfolio-section py-5 bg-light">
     <div class="container">
         <div class="row justify-content-center text-center mb-3">
