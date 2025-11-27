@@ -459,7 +459,7 @@ include 'koneksi.php';
                     </div>
                     <div class="swiper-slide">
                         <div class="portfolio-slide-item">
-                            <img src="assets/img/kemusuk.png" alt="Sistem Informasi Dusun" class="portfolio-slide-img">
+                            <img src="assets/img/sekolahku.png" alt="Sistem Informasi Dusun" class="portfolio-slide-img">
                         </div>
                     </div>
                     <div class="swiper-slide">
