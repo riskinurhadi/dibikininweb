@@ -69,9 +69,9 @@ body {
     width: calc(100% - 2rem); 
     max-width: 500px; 
     
-    /* Visuals */
+    /* Visuals - Mengurangi transparansi */
     display: flex; /* Untuk menata item di dalamnya */
-    background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.5));
+    background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.75));
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 0.6rem 0;
@@ -259,6 +259,48 @@ body {
     .contact-form .input-group-text {
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
+        background: rgba(255,255,255,0.9);
+        /* Menghilangkan transisi yang berat saat scroll */
+        transition: none;
+    }
+    
+    .contact-form .form-control:focus,
+    .contact-form .form-select:focus {
+        transition: border-color 0.15s ease;
+        background: #ffffff;
+    }
+    
+    /* Optimasi contact section untuk performa scrolling */
+    .contact-section {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        /* Mengurangi kompleksitas background */
+        background: #f8f9fa;
+    }
+    
+    .info-card {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        /* Menghilangkan backdrop-filter yang berat */
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(255,255,255,0.95);
+    }
+    
+    .info-icon {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+    
+    /* Optimasi form kontak - menghilangkan semua transisi saat scroll */
+    .contact-form {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+    .contact-form .input-group {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
     }
     
     /* Optimasi floating nugget */
@@ -594,6 +636,13 @@ body {
 }
 
 /* --- CONTACT SECTION --- */
+.contact-section {
+    /* Hardware acceleration untuk performa scrolling */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    position: relative;
+}
+
 .info-icon {
     display: inline-flex;
     align-items: center;
@@ -604,6 +653,9 @@ body {
     color: var(--primary-color);
     border-radius: 50%;
     font-size: 1.75rem;
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 /* Kustomisasi Form Kontak */
@@ -615,6 +667,11 @@ body {
     padding-top: 0.9rem;
     padding-bottom: 0.9rem;
     backdrop-filter: blur(6px);
+    /* Hardware acceleration untuk performa lebih baik */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    /* Mengurangi transisi yang berat */
+    transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .contact-form .input-group-text {
@@ -635,6 +692,9 @@ body {
 .contact-form .form-select:focus {
     box-shadow: none;
     border-color: var(--primary-color);
+    /* Optimasi focus untuk performa */
+    outline: none;
+    background: rgba(255,255,255,0.8);
 }
 
 .contact-form textarea.form-control {
