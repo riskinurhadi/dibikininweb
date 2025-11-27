@@ -179,7 +179,7 @@ include 'koneksi.php';
                     <h6 class="text-primary text-uppercase fw-bold">Tentang Kami</h6>
                     <h2 class="display-6 fw-bold mb-3">Jasa Web Development & Pembuatan Website Profesional</h2>
                     <p class="text-muted mb-4">
-                         Kami adalah partner digital terpercaya yang menyediakan jasa pembuatan website profesional dan jasa web development berkualitas tinggi. Dengan pengalaman dalam pembuatan web yang inovatif, kami membantu meningkatkan citra brand dan jangkauan pasar Anda melalui strategi digital yang tepat sasaran.
+                         Kami adalah partner digital terpercaya yang menyediakan jasa pembuatan website profesional atau jasa web development berkualitas tinggi. Dengan pengalaman dalam pembuatan web yang inovatif, kami membantu meningkatkan citra brand dan jangkauan pasar Anda melalui strategi digital yang tepat sasaran.
                     </p>
                     
                     <div class="checklist mb-4">
@@ -193,7 +193,7 @@ include 'koneksi.php';
                             <div class="checklist-icon me-3">
                                 <i class="bi bi-check-circle-fill"></i>
                             </div>
-                            <span>Eksekusi desain yang presisi dan jasa web development yang sesuai standar terkini untuk pembuatan web berkualitas.</span>
+                            <span>Eksekusi desain yang presisi dan web development yang sesuai standar terkini untuk pembuatan web berkualitas.</span>
                         </div>
                          <div class="d-flex align-items-start">
                             <div class="checklist-icon me-3">
@@ -235,7 +235,7 @@ include 'koneksi.php';
                 <h2 class="display-6 fw-bold">Proses Kerja Kami</h2>
                 <div class="title-divider mx-auto"></div>
                 <p class="lead text-muted mt-2">
-                    Dalam setiap jasa pembuatan website dan jasa web development yang kami tawarkan, kami mengikuti alur kerja yang terstruktur dan transparan untuk memastikan proses pembuatan web berjalan lancar dan memberikan hasil terbaik tepat waktu.
+                    Dalam setiap jasa pembuatan website yang kami tawarkan, kami mengikuti alur kerja yang terstruktur dan transparan untuk memastikan proses pembuatan web berjalan lancar dan memberikan hasil terbaik tepat waktu.
                 </p>
             </div>
         </div>
@@ -260,7 +260,7 @@ include 'koneksi.php';
                         </div>
                         <div class="process-text">
                             <h4 class="fw-bold mb-1">Fase Pengembangan</h4>
-                            <p class="text-muted mb-0">Proses jasa web development dimulai dari desain UI/UX hingga penulisan kode (coding) untuk pembuatan web sesuai dengan rencana yang telah disepakati.</p>
+                            <p class="text-muted mb-0">Proses web development dimulai dari desain UI/UX hingga penulisan kode (coding) untuk pembuatan web sesuai dengan rencana yang telah disepakati.</p>
                         </div>
                     </div>
                 </div>
@@ -298,7 +298,7 @@ include 'koneksi.php';
                 <h2 class="display-6 fw-bold">Layanan Kami</h2>
                 <div class="title-divider mx-auto"></div>
                 <p class="lead text-muted mt-2">
-                    Sebagai penyedia jasa pembuatan website dan jasa web development terpercaya, kami menyediakan solusi pembuatan web yang komprehensif untuk membantu brand Anda tumbuh dan bersinar di dunia online.
+                    Sebagai penyedia jasa pembuatan website terpercaya, kami menyediakan solusi web development yang komprehensif untuk membantu brand Anda tumbuh dan bersinar di dunia online.
                 </p>
             </div>
         </div>
@@ -311,7 +311,7 @@ include 'koneksi.php';
                     </div>
                     <div class="service-content">
                         <h4 class="fw-bold mb-2">Jasa Web Development</h4>
-                        <p class="text-muted">Layanan jasa pembuatan website profesional dari nol dengan performa tinggi, aman, dan disesuaikan penuh dengan kebutuhan bisnis unik Anda. Kami siap membantu Anda bikin website berkualitas.</p>
+                        <p class="text-muted">Jasa pembuatan website profesional dari nol dengan performa tinggi, aman, dan disesuaikan penuh dengan kebutuhan bisnis unik Anda. Kami siap membantu Anda bikin website berkualitas.</p>
                         <a href="#" class="learn-more-link">
                             Pelajari Lebih Lanjut <i class="bi bi-arrow-right"></i>
                         </a>
@@ -378,7 +378,7 @@ include 'koneksi.php';
                 <h2 class="display-6 fw-bold">Portfolio</h2>
                 <div class="title-divider mx-auto"></div>
                 <p class="lead text-muted mt-3">
-                    Berikut adalah beberapa hasil jasa pembuatan website dan jasa web development yang telah kami selesaikan dengan bangga untuk para klien hebat kami. Setiap pembuatan web yang kami kerjakan dirancang khusus sesuai kebutuhan bisnis.
+                    Berikut adalah beberapa hasil web development yang telah kami selesaikan dengan bangga untuk para klien hebat kami. Setiap pembuatan web yang kami kerjakan dirancang khusus sesuai kebutuhan bisnis.
                 </p>
             </div>
         </div>
@@ -765,7 +765,7 @@ include 'koneksi.php';
                         </p>
                         <h2 class="display-5 fw-bold mb-3">Siap Bikin Website Profesional untuk Bisnis Anda?</h2>
                         <p class="text-muted mb-4">
-                            Jadilah bagian dari puluhan klien puas yang telah mempercayakan jasa pembuatan website dan jasa web development mereka kepada kami. Sebagai penyedia layanan pembuatan web terpercaya, kami siap menjadi partner terbaik untuk mengembangkan bisnis digital Anda.
+                            Jadilah bagian dari puluhan klien puas yang telah mempercayakan pembuatan website mereka kepada kami. Sebagai penyedia layanan pembuatan web terpercaya, kami siap menjadi partner terbaik untuk mengembangkan bisnis digital Anda.
                         </p>
                         
                         <div class="row mb-4">
@@ -938,7 +938,7 @@ include 'koneksi.php';
                     <a href="#" class="logo d-flex align-items-center">
                         <img src="assets/img/dibikininweb.png" alt="dibikininweb" style="height: 50px;" />
                     </a>
-                    <p>Partner digital terpercaya untuk jasa pembuatan website, jasa web development, dan desain grafis yang inovatif. Kami siap membantu Anda bikin website berkualitas dengan hasil yang memuaskan.</p>
+                    <p>Partner digital terpercaya untuk jasa pembuatan website atau jasa web development dan desain grafis yang inovatif. Kami siap membantu Anda bikin website berkualitas dengan hasil yang memuaskan.</p>
                     <div class="social-links mt-3">
                         <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
                         <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
