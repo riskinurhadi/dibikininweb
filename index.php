@@ -177,7 +177,7 @@ include 'koneksi.php';
             <div class="col-lg-6">
                 <div class="about-us-content">
                     <h6 class="text-primary text-uppercase fw-bold">Tentang Kami</h6>
-                    <h2 class="display-6 fw-bold mb-3">Jasa Web Development & Pembuatan Website Profesional</h2>
+                    <h2 class="display-6 fw-bold mb-3">Jasa Web Development yang Profesional dan Handal</h2>
                     <p class="text-muted mb-4">
                          Kami adalah partner digital terpercaya yang menyediakan jasa pembuatan website profesional atau jasa web development berkualitas tinggi. Dengan pengalaman dalam pembuatan web yang inovatif, kami membantu meningkatkan citra brand dan jangkauan pasar Anda melalui strategi digital yang tepat sasaran.
                     </p>
@@ -235,7 +235,7 @@ include 'koneksi.php';
                 <h2 class="display-6 fw-bold">Proses Kerja Kami</h2>
                 <div class="title-divider mx-auto"></div>
                 <p class="lead text-muted mt-2">
-                    Dalam setiap jasa pembuatan website yang kami tawarkan, kami mengikuti alur kerja yang terstruktur dan transparan untuk memastikan proses pembuatan web berjalan lancar dan memberikan hasil terbaik tepat waktu.
+                    Dalam setiap pembuatan website yang kami tawarkan, kami mengikuti alur kerja yang terstruktur dan transparan untuk memastikan proses pembuatan web berjalan lancar dan memberikan hasil terbaik tepat waktu.
                 </p>
             </div>
         </div>
