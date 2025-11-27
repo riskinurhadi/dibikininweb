@@ -96,7 +96,7 @@ include 'koneksi.php';
         <div class="row align-items-center">
 
             <div class="col-lg-6 text-center order-1 order-lg-2 mb-4 mb-lg-0">
-                <img src="img/hero.png" alt="Ilustrasi Tim sedang menganalisis data" class="img-fluid hero-illustration text-end">
+                <img src="assets/img/hero.png" alt="Ilustrasi Tim sedang menganalisis data" class="img-fluid hero-illustration text-end">
             </div>
 
             <div class="col-lg-6 text-center text-lg-start order-2 order-lg-1">
@@ -758,7 +758,7 @@ include 'koneksi.php';
                                         <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
                                     </div>
                                     <div class="d-flex align-items-center">
-                                        <img src="img/fitr.png" class="testimonial-avatar me-3" alt="David Miller">
+                                        <img src="assets/img/fitr.png" class="testimonial-avatar me-3" alt="David Miller">
                                         <div>
                                             <h6 class="fw-bold mb-0">Fitri Nasution</h6>
                                             <small class="text-muted">Mahasiswa</small>
@@ -776,7 +776,7 @@ include 'koneksi.php';
                                         <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
                                     </div>
                                     <div class="d-flex align-items-center">
-                                        <img src="img/kyy.png" class="testimonial-avatar me-3" alt="Michael Davis">
+                                        <img src="assets/img/kyy.png" class="testimonial-avatar me-3" alt="Michael Davis">
                                         <div>
                                             <h6 class="fw-bold mb-0">Riski Nurhadi</h6>
                                             <small class="text-muted">Owner & Founder</small>
@@ -794,7 +794,7 @@ include 'koneksi.php';
                                         <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
                                     </div>
                                     <div class="d-flex align-items-center">
-                                        <img src="img/fitr.png" class="testimonial-avatar me-3" alt="David Miller">
+                                        <img src="assets/img/fitr.png" class="testimonial-avatar me-3" alt="David Miller">
                                         <div>
                                             <h6 class="fw-bold mb-0">Fitri Nasution</h6>
                                             <small class="text-muted">Mahasiswa</small>
@@ -861,7 +861,7 @@ include 'koneksi.php';
                 </div>
 
                 <div class="col-lg-6 justify-content-end d-lg-block position-relative d-none d-lg-block">
-                    <img src="img/join.png" alt="Wanita menunjuk ke arah teks ajakan" class="img-fluid ms-auto d-block cta-person-img flex-end">
+                    <img src="assets/img/join.png" alt="Wanita menunjuk ke arah teks ajakan" class="img-fluid ms-auto d-block cta-person-img flex-end">
                     
                     <div class="floating-nugget" style="top: 15%; left: 0;">
                          <i class="bi bi-graph-up-arrow text-primary me-2"></i> 5+ Instansi Percaya
