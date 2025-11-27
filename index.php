@@ -442,7 +442,7 @@ include 'koneksi.php';
             <div class="col-md-6 col-lg-4">
                 <div class="card portfolio-card h-100">
                     <div class="portfolio-img-wrapper">
-                        <img src="img/tampingan.png" class="card-img-top" alt="Proyek Web Design">
+                        <img src="assets/img/tampingan.png" class="card-img-top" alt="Proyek Web Design">
                     </div>
                     <div class="card-body">
                         <p class="portfolio-category">Web Development</p>
@@ -455,7 +455,7 @@ include 'koneksi.php';
             <div class="col-md-6 col-lg-4">
                 <div class="card portfolio-card h-100">
                     <div class="portfolio-img-wrapper">
-                        <img src="img/waylaga.png" class="card-img-top" alt="Proyek Web Design">
+                        <img src="assets/img/waylaga.png" class="card-img-top" alt="Proyek Web Design">
                     </div>
                     <div class="card-body">
                         <p class="portfolio-category">Web Development</p>
@@ -468,7 +468,7 @@ include 'koneksi.php';
             <div class="col-md-6 col-lg-4">
                 <div class="card portfolio-card h-100">
                     <div class="portfolio-img-wrapper">
-                        <img src="img/mataneka.png" class="card-img-top" alt="Proyek Web Design">
+                        <img src="assets/img/mataneka.png" class="card-img-top" alt="Proyek Web Design">
                     </div>
                     <div class="card-body">
                         <p class="portfolio-category">Web Development</p>
@@ -480,7 +480,7 @@ include 'koneksi.php';
             <div class="col-md-6 col-lg-4">
                 <div class="card portfolio-card h-100">
                      <div class="portfolio-img-wrapper">
-                        <img src="img/kemusuk.png" class="card-img-top" alt="Proyek Graphics">
+                        <img src="assets/img/kemusuk.png" class="card-img-top" alt="Proyek Graphics">
                     </div>
                     <div class="card-body">
                         <p class="portfolio-category">Web Development</p>
@@ -492,7 +492,7 @@ include 'koneksi.php';
             <div class="col-md-6 col-lg-4">
                 <div class="card portfolio-card h-100">
                      <div class="portfolio-img-wrapper">
-                        <img src="img/rm.png" class="card-img-top" alt="Proyek Branding">
+                        <img src="assets/img/rm.png" class="card-img-top" alt="Proyek Branding">
                     </div>
                     <div class="card-body">
                         <p class="portfolio-category">Web Development</p>
@@ -504,7 +504,7 @@ include 'koneksi.php';
              <div class="col-md-6 col-lg-4">
                 <div class="card portfolio-card h-100">
                      <div class="portfolio-img-wrapper">
-                        <img src="img/ikram.png" class="card-img-top" alt="Proyek Web App">
+                        <img src="assets/img/ikram.png" class="card-img-top" alt="Proyek Web App">
                     </div>
                     <div class="card-body">
                         <p class="portfolio-category">Graphics Design</p>
@@ -516,7 +516,7 @@ include 'koneksi.php';
              <div class="col-md-6 col-lg-4">
                 <div class="card portfolio-card h-100">
                      <div class="portfolio-img-wrapper">
-                        <img src="img/bannerskr.png" class="card-img-top" alt="Proyek UI/UX">
+                        <img src="assets/img/bannerskr.png" class="card-img-top" alt="Proyek UI/UX">
                     </div>
                     <div class="card-body">
                         <p class="portfolio-category">Graphics Design</p>
@@ -528,7 +528,7 @@ include 'koneksi.php';
              <div class="col-md-6 col-lg-4">
                 <div class="card portfolio-card h-100">
                      <div class="portfolio-img-wrapper">
-                        <img src="img/figmahimatik.png" class="card-img-top" alt="Proyek Motion Graphics">
+                        <img src="assets/img/figmahimatik.png" class="card-img-top" alt="Proyek Motion Graphics">
                     </div>
                     <div class="card-body">
                         <p class="portfolio-category">Ui Design</p>
