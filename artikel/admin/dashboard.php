@@ -113,27 +113,15 @@ $tanggal = $hari[date('w')] . ', ' . date('d') . ' ' . $bulan[date('n')] . ' ' .
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- Include Styles -->
+    <?php include 'includes/styles.php'; ?>
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         :root {
-            --sidebar-bg: #1a1d29;
-            --sidebar-hover: #252836;
-            --sidebar-active: #2d3242;
-            --main-bg: #f5f6fa;
-            --text-primary: #2d3748;
-            --text-secondary: #718096;
-            --border-color: #e2e8f0;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--main-bg);
-            overflow-x: hidden;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
         }
         
         /* Sidebar */
@@ -547,98 +535,11 @@ $tanggal = $hari[date('w')] . ', ' . date('d') . ' ' . $bulan[date('n')] . ' ' .
     </style>
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
-        <i class="bi bi-list"></i>
-    </button>
-    
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <i class="bi bi-newspaper"></i>
-            <span class="sidebar-logo-text">Redaksi.</span>
-        </div>
-        
-        <nav class="sidebar-menu">
-            <div class="menu-section">
-                <div class="menu-section-title">MAIN</div>
-                <a href="dashboard.php" class="menu-item active">
-                    <i class="bi bi-speedometer2"></i>
-                    <span class="menu-item-text">Dashboard</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="bi bi-file-text"></i>
-                    <span class="menu-item-text">Semua Berita</span>
-                    <?php if ($stats['semua_berita'] > 0): ?>
-                        <span class="badge-menu"><?php echo $stats['semua_berita']; ?></span>
-                    <?php endif; ?>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="bi bi-pencil-square"></i>
-                    <span class="menu-item-text">Tulis Baru</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="bi bi-folder"></i>
-                    <span class="menu-item-text">Kategori</span>
-                </a>
-            </div>
-            
-            <div class="menu-section">
-                <div class="menu-section-title">INTERAKSI</div>
-                <a href="#" class="menu-item">
-                    <i class="bi bi-chat-left-text"></i>
-                    <span class="menu-item-text">Komentar</span>
-                    <?php if ($stats['komentar'] > 0): ?>
-                        <span class="badge-menu"><?php echo $stats['komentar']; ?></span>
-                    <?php endif; ?>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="bi bi-people"></i>
-                    <span class="menu-item-text">Pembaca</span>
-                </a>
-            </div>
-            
-            <div class="menu-section">
-                <div class="menu-section-title">SISTEM</div>
-                <a href="#" class="menu-item">
-                    <i class="bi bi-images"></i>
-                    <span class="menu-item-text">Media Library</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="bi bi-gear"></i>
-                    <span class="menu-item-text">Pengaturan</span>
-                </a>
-                <a href="logout.php" class="menu-item">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span class="menu-item-text">Logout</span>
-                </a>
-            </div>
-        </nav>
-    </aside>
+    <?php include 'includes/sidebar.php'; ?>
     
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Header -->
-        <header class="content-header">
-            <div class="header-left">
-                <h1>Dashboard Redaksi</h1>
-                <div class="header-info">
-                    <span><?php echo $tanggal; ?></span>
-                    <span class="status-dot"></span>
-                    <span>Live Server</span>
-                </div>
-            </div>
-            <div class="header-right">
-                <button class="notification-btn">
-                    <i class="bi bi-bell"></i>
-                    <span class="notification-dot"></span>
-                </button>
-                <a href="#" class="btn-tulis-berita">
-                    <i class="bi bi-pencil"></i>
-                    Tulis Berita
-                </a>
-            </div>
-        </header>
+        <?php include 'includes/header.php'; ?>
         
         <!-- Content Body -->
         <div class="content-body">
@@ -738,23 +639,6 @@ $tanggal = $hari[date('w')] . ', ' . date('d') . ' ' . $bulan[date('n')] . ' ' .
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Toggle Sidebar Mobile
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('show');
-        }
-        
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const toggle = document.querySelector('.mobile-menu-toggle');
-            const isClickInsideSidebar = sidebar.contains(event.target);
-            const isClickOnToggle = toggle.contains(event.target);
-            
-            if (window.innerWidth <= 992 && !isClickInsideSidebar && !isClickOnToggle) {
-                sidebar.classList.remove('show');
-            }
-        });
-        
         // Chart.js
         const ctx = document.getElementById('readerChart').getContext('2d');
         const chartData = <?php echo json_encode($chartData); ?>;
