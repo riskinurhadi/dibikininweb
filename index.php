@@ -432,7 +432,7 @@ include 'koneksi.php';
             <div class="col-lg-8">
                 <h2 class="display-6 fw-bold">Portfolio</h2>
                 <div class="title-divider mx-auto"></div>
-                <p class="lead text-muted mt-3">
+                <p class="lead text-muted mt-3"> 
                     Berikut adalah beberapa hasil web development yang telah kami selesaikan dengan bangga untuk para klien hebat kami. Setiap pembuatan web yang kami kerjakan dirancang khusus sesuai kebutuhan bisnis.
                 </p>
             </div>
