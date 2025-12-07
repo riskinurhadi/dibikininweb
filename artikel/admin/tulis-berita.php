@@ -115,8 +115,9 @@ if ($pdo) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- TinyMCE Editor -->
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <!-- Summernote Editor -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.js"></script>
     
     <!-- Include Styles -->
     <?php include 'includes/styles.php'; ?>
@@ -247,9 +248,30 @@ if ($pdo) {
             }
         }
         
-        .tox-tinymce {
+        /* Summernote Editor Styling */
+        .note-editor {
             border-radius: 8px;
             border: 1px solid var(--border-color) !important;
+        }
+        
+        .note-editor.note-frame .note-editing-area .note-editable {
+            min-height: 400px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+        
+        .note-toolbar {
+            background: #f8f9fa;
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .note-btn {
+            border-radius: 4px;
+        }
+        
+        .note-btn:hover {
+            background: #e9ecef;
         }
     </style>
 </head>
@@ -388,26 +410,37 @@ if ($pdo) {
         </div>
     </main>
     
+    <!-- jQuery (required for Summernote) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // TinyMCE Editor
-        tinymce.init({
-            selector: '#konten',
-            height: 500,
-            menubar: false,
-            plugins: [
-                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
-            ],
-            toolbar: 'undo redo | blocks | ' +
-                'bold italic forecolor | alignleft aligncenter ' +
-                'alignright alignjustify | bullist numlist outdent indent | ' +
-                'removeformat | link image | code help',
-            content_style: 'body { font-family: Inter, sans-serif; font-size: 14px; }',
-            branding: false
+        // Summernote Editor
+        $(document).ready(function() {
+            $('#konten').summernote({
+                height: 500,
+                placeholder: 'Tulis konten artikel Anda di sini...',
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ],
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Inter', 'Times New Roman', 'Verdana'],
+                fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '36', '48'],
+                callbacks: {
+                    onInit: function() {
+                        $('.note-editor').css('border-radius', '8px');
+                    }
+                }
+            });
         });
         
         // Character count untuk ringkasan
