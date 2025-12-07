@@ -7,7 +7,7 @@
 // Konfigurasi Database
 $host = 'localhost';
 $dbname = 'dibikininweb'; 
-$username = 'dibikininweb';
+$username = 'dibikininweb'; 
 $password = 'Aloevera21.';
 
 // Inisialisasi $pdo sebagai null
