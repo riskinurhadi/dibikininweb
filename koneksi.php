@@ -6,7 +6,7 @@
 
 // Konfigurasi Database
 $host = 'localhost';
-$dbname = 'dibikininweb';
+$dbname = 'dibikininweb'; 
 $username = 'dibikininweb';
 $password = 'Aloevera21.';
 
