@@ -8,44 +8,59 @@ session_start();
 require_once __DIR__ . '/../koneksi.php';
 require_once __DIR__ . '/../database/ArticleModel.php';
 
-// Inisialisasi ArticleModel
-$articleModel = new ArticleModel($pdo);
+// Inisialisasi variabel
+$articles = [];
+$categories = [];
+$popularArticles = [];
+$totalArticles = 0;
+$totalPages = 1;
+$dbError = false;
 
-// Pagination
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$limit = 9; // 9 artikel per halaman
-$category_id = isset($_GET['category']) ? (int)$_GET['category'] : null;
-$search = isset($_GET['search']) ? trim($_GET['search']) : null;
+// Cek koneksi database
+if (!$pdo) {
+    $dbError = true;
+    $errorMessage = "Database belum dikonfigurasi atau belum dibuat. Silakan buat database terlebih dahulu dengan menjalankan file database_artikel.sql";
+} else {
+    try {
+        // Inisialisasi ArticleModel
+        $articleModel = new ArticleModel($pdo);
 
-// Ambil artikel
-$articles = $articleModel->getList([
-    'status' => 'published',
-    'category_id' => $category_id,
-    'search' => $search,
-    'page' => $page,
-    'limit' => $limit,
-    'order_by' => 'published_at',
-    'order_dir' => 'DESC'
-]);
+        // Pagination
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 9; // 9 artikel per halaman
+        $kategori_id = isset($_GET['category']) ? (int)$_GET['category'] : null;
+        $search = isset($_GET['search']) ? trim($_GET['search']) : null;
 
-$totalArticles = $articleModel->getCount([
-    'status' => 'published',
-    'category_id' => $category_id,
-    'search' => $search
-]);
+        // Ambil artikel
+        $articles = $articleModel->getList([
+            'status' => 'published',
+            'kategori_id' => $kategori_id,
+            'search' => $search,
+            'page' => $page,
+            'limit' => $limit,
+            'order_by' => 'published_at',
+            'order_dir' => 'DESC'
+        ]);
 
-$totalPages = ceil($totalArticles / $limit);
+        $totalArticles = $articleModel->getCount([
+            'status' => 'published',
+            'kategori_id' => $kategori_id,
+            'search' => $search
+        ]);
 
-// Ambil kategori untuk filter
-try {
-    $categoriesStmt = $pdo->query("SELECT * FROM article_categories WHERE is_active = 1 ORDER BY sort_order, name");
-    $categories = $categoriesStmt->fetchAll();
-} catch (Exception $e) {
-    $categories = [];
+        $totalPages = max(1, ceil($totalArticles / $limit));
+
+        // Ambil kategori untuk filter
+        $categoriesStmt = $pdo->query("SELECT * FROM kategori_artikel ORDER BY nama");
+        $categories = $categoriesStmt->fetchAll();
+
+        // Ambil artikel populer
+        $popularArticles = $articleModel->getPopularArticles(5);
+    } catch (Exception $e) {
+        $dbError = true;
+        $errorMessage = "Error: " . $e->getMessage();
+    }
 }
-
-// Ambil artikel populer
-$popularArticles = $articleModel->getPopularArticles(5);
 
 // Base URL
 $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
@@ -341,8 +356,8 @@ $currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
                             <input type="text" name="search" class="form-control" placeholder="Cari artikel..." value="<?php echo htmlspecialchars($search ?? ''); ?>">
                             <button type="submit"><i class="bi bi-search"></i></button>
                         </div>
-                        <?php if ($category_id): ?>
-                            <input type="hidden" name="category" value="<?php echo $category_id; ?>">
+                        <?php if (!empty($kategori_id)): ?>
+                            <input type="hidden" name="category" value="<?php echo $kategori_id; ?>">
                         <?php endif; ?>
                     </form>
                 </div>
@@ -354,8 +369,8 @@ $currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
                     <ul class="category-filter">
                         <li><a href="index.php" class="<?php echo !$category_id ? 'active' : ''; ?>">Semua Kategori</a></li>
                         <?php foreach ($categories as $cat): ?>
-                            <li><a href="?category=<?php echo $cat['id']; ?>" class="<?php echo $category_id == $cat['id'] ? 'active' : ''; ?>">
-                                <?php echo htmlspecialchars($cat['name']); ?>
+                            <li><a href="?category=<?php echo $cat['id']; ?>" class="<?php echo ($kategori_id ?? null) == $cat['id'] ? 'active' : ''; ?>">
+                                <?php echo htmlspecialchars($cat['nama']); ?>
                             </a></li>
                         <?php endforeach; ?>
                     </ul>
@@ -366,19 +381,19 @@ $currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
                 <?php if (!empty($popularArticles)): ?>
                 <div class="sidebar-card">
                     <h5><i class="bi bi-fire me-2"></i>Artikel Populer</h5>
-                    <?php foreach ($popularArticles as $pop): ?>
+                        <?php foreach ($popularArticles as $pop): ?>
                         <a href="detail.php?slug=<?php echo htmlspecialchars($pop['slug']); ?>" class="popular-article-item">
-                            <?php if (!empty($pop['featured_image'])): ?>
-                                <img src="<?php echo htmlspecialchars($pop['featured_image']); ?>" alt="<?php echo htmlspecialchars($pop['title']); ?>">
+                            <?php if (!empty($pop['gambar'])): ?>
+                                <img src="<?php echo htmlspecialchars($pop['gambar']); ?>" alt="<?php echo htmlspecialchars($pop['judul']); ?>">
                             <?php else: ?>
                                 <div class="no-image-placeholder" style="width: 80px; height: 80px; font-size: 24px;">
                                     <i class="bi bi-file-text"></i>
                                 </div>
                             <?php endif; ?>
                             <div class="popular-article-content">
-                                <h6><?php echo htmlspecialchars($pop['title']); ?></h6>
+                                <h6><?php echo htmlspecialchars($pop['judul']); ?></h6>
                                 <div class="meta">
-                                    <i class="bi bi-eye me-1"></i><?php echo number_format($pop['view_count']); ?> views
+                                    <i class="bi bi-eye me-1"></i><?php echo number_format($pop['dilihat'] ?? 0); ?> views
                                 </div>
                             </div>
                         </a>
@@ -389,13 +404,25 @@ $currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
 
             <!-- Articles List -->
             <div class="col-lg-8">
-                <?php if (!empty($articles)): ?>
+                <?php if ($dbError): ?>
+                    <div class="alert alert-warning" role="alert">
+                        <h5><i class="bi bi-exclamation-triangle-fill me-2"></i>Database Error</h5>
+                        <p><?php echo htmlspecialchars($errorMessage ?? 'Terjadi kesalahan pada database.'); ?></p>
+                        <hr>
+                        <p class="mb-0"><strong>Cara mengatasi:</strong></p>
+                        <ol class="mb-0">
+                            <li>Buat database dengan nama <code>dibikininweb_db</code></li>
+                            <li>Jalankan file SQL: <code>database_artikel.sql</code></li>
+                            <li>Pastikan konfigurasi di <code>koneksi.php</code> sudah benar</li>
+                        </ol>
+                    </div>
+                <?php elseif (!empty($articles)): ?>
                     <div class="row g-4">
                         <?php foreach ($articles as $article): ?>
                             <div class="col-md-6">
                                 <div class="article-card">
-                                    <?php if (!empty($article['featured_image'])): ?>
-                                        <img src="<?php echo htmlspecialchars($article['featured_image']); ?>" alt="<?php echo htmlspecialchars($article['featured_image_alt'] ?? $article['title']); ?>">
+                                    <?php if (!empty($article['gambar'])): ?>
+                                        <img src="<?php echo htmlspecialchars($article['gambar']); ?>" alt="<?php echo htmlspecialchars($article['judul']); ?>">
                                     <?php else: ?>
                                         <div class="no-image-placeholder">
                                             <i class="bi bi-file-text"></i>
@@ -403,27 +430,29 @@ $currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
                                     <?php endif; ?>
                                     
                                     <div class="article-card-body">
-                                        <?php if (!empty($article['category_name'])): ?>
-                                            <span class="article-category"><?php echo htmlspecialchars($article['category_name']); ?></span>
+                                        <?php if (!empty($article['kategori_nama'])): ?>
+                                            <span class="article-category"><?php echo htmlspecialchars($article['kategori_nama']); ?></span>
                                         <?php endif; ?>
                                         
                                         <h3 class="article-card-title">
                                             <a href="detail.php?slug=<?php echo htmlspecialchars($article['slug']); ?>">
-                                                <?php echo htmlspecialchars($article['title']); ?>
+                                                <?php echo htmlspecialchars($article['judul']); ?>
                                             </a>
                                         </h3>
                                         
                                         <p class="article-excerpt">
-                                            <?php echo htmlspecialchars($article['excerpt'] ?? ''); ?>
+                                            <?php echo htmlspecialchars($article['ringkasan'] ?? ''); ?>
                                         </p>
                                         
                                         <div class="article-meta">
-                                            <span><i class="bi bi-calendar me-1"></i><?php echo date('d M Y', strtotime($article['published_at'])); ?></span>
-                                            <?php if (!empty($article['author_name'])): ?>
-                                                <span><i class="bi bi-person me-1"></i><?php echo htmlspecialchars($article['author_name']); ?></span>
+                                            <?php if (!empty($article['published_at'])): ?>
+                                                <span><i class="bi bi-calendar me-1"></i><?php echo date('d M Y', strtotime($article['published_at'])); ?></span>
                                             <?php endif; ?>
-                                            <?php if (!empty($article['reading_time'])): ?>
-                                                <span><i class="bi bi-clock me-1"></i><?php echo $article['reading_time']; ?> menit</span>
+                                            <?php if (!empty($article['penulis'])): ?>
+                                                <span><i class="bi bi-person me-1"></i><?php echo htmlspecialchars($article['penulis']); ?></span>
+                                            <?php endif; ?>
+                                            <?php if (!empty($article['waktu_baca'])): ?>
+                                                <span><i class="bi bi-clock me-1"></i><?php echo $article['waktu_baca']; ?> menit</span>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -436,16 +465,16 @@ $currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
                     <?php if ($totalPages > 1): ?>
                         <nav aria-label="Page navigation" class="mt-5">
                             <ul class="pagination justify-content-center">
-                                <?php if ($page > 1): ?>
+                                    <?php if ($page > 1): ?>
                                     <li class="page-item">
-                                        <a class="page-link" href="?page=<?php echo $page - 1; ?><?php echo $category_id ? '&category=' . $category_id : ''; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>">Previous</a>
+                                        <a class="page-link" href="?page=<?php echo $page - 1; ?><?php echo ($kategori_id ?? null) ? '&category=' . $kategori_id : ''; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>">Previous</a>
                                     </li>
                                 <?php endif; ?>
                                 
                                 <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                                     <?php if ($i == 1 || $i == $totalPages || ($i >= $page - 2 && $i <= $page + 2)): ?>
                                         <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
-                                            <a class="page-link" href="?page=<?php echo $i; ?><?php echo $category_id ? '&category=' . $category_id : ''; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>"><?php echo $i; ?></a>
+                                            <a class="page-link" href="?page=<?php echo $i; ?><?php echo ($kategori_id ?? null) ? '&category=' . $kategori_id : ''; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>"><?php echo $i; ?></a>
                                         </li>
                                     <?php elseif ($i == $page - 3 || $i == $page + 3): ?>
                                         <li class="page-item disabled">
@@ -456,7 +485,7 @@ $currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
                                 
                                 <?php if ($page < $totalPages): ?>
                                     <li class="page-item">
-                                        <a class="page-link" href="?page=<?php echo $page + 1; ?><?php echo $category_id ? '&category=' . $category_id : ''; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>">Next</a>
+                                        <a class="page-link" href="?page=<?php echo $page + 1; ?><?php echo ($kategori_id ?? null) ? '&category=' . $kategori_id : ''; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>">Next</a>
                                     </li>
                                 <?php endif; ?>
                             </ul>

@@ -7,6 +7,11 @@ session_start();
 require_once __DIR__ . '/../koneksi.php';
 require_once __DIR__ . '/../database/ArticleModel.php';
 
+// Cek koneksi database
+if (!$pdo) {
+    die("Database belum dikonfigurasi. Silakan buat database terlebih dahulu dengan menjalankan file database_artikel.sql");
+}
+
 $articleModel = new ArticleModel($pdo);
 
 // Ambil slug dari URL
@@ -18,15 +23,19 @@ if (empty($slug)) {
 }
 
 // Ambil artikel berdasarkan slug
-$article = $articleModel->getBySlug($slug);
-
-if (!$article) {
-    header('Location: index.php');
-    exit;
+try {
+    $article = $articleModel->getBySlug($slug);
+    
+    if (!$article) {
+        header('Location: index.php');
+        exit;
+    }
+    
+    // Ambil artikel terkait
+    $relatedArticles = $articleModel->getRelatedArticles($article['id'], 3);
+} catch (Exception $e) {
+    die("Error: " . $e->getMessage());
 }
-
-// Ambil artikel terkait
-$relatedArticles = $articleModel->getRelatedArticles($article['id'], 3);
 
 // Base URL
 $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
@@ -37,17 +46,16 @@ $currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($article['meta_title'] ?? $article['title']); ?> | dibikininweb</title>
-    <meta name="description" content="<?php echo htmlspecialchars($article['meta_description'] ?? $article['excerpt'] ?? ''); ?>">
-    <meta name="keywords" content="<?php echo htmlspecialchars($article['meta_keywords'] ?? ''); ?>">
+    <title><?php echo htmlspecialchars($article['judul']); ?> | dibikininweb</title>
+    <meta name="description" content="<?php echo htmlspecialchars($article['ringkasan'] ?? ''); ?>">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="<?php echo htmlspecialchars($article['og_title'] ?? $article['title']); ?>">
-    <meta property="og:description" content="<?php echo htmlspecialchars($article['og_description'] ?? $article['excerpt'] ?? ''); ?>">
+    <meta property="og:title" content="<?php echo htmlspecialchars($article['judul']); ?>">
+    <meta property="og:description" content="<?php echo htmlspecialchars($article['ringkasan'] ?? ''); ?>">
     <meta property="og:type" content="article">
     <meta property="og:url" content="<?php echo htmlspecialchars($currentUrl); ?>">
-    <?php if (!empty($article['og_image'] ?? $article['featured_image'])): ?>
-        <meta property="og:image" content="<?php echo htmlspecialchars($article['og_image'] ?? $article['featured_image']); ?>">
+    <?php if (!empty($article['gambar'])): ?>
+        <meta property="og:image" content="<?php echo htmlspecialchars($article['gambar']); ?>">
     <?php endif; ?>
     
     <!-- Bootstrap CSS -->
@@ -222,7 +230,7 @@ $currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="../index.php" style="color: rgba(255,255,255,0.8); text-decoration: none;">Home</a></li>
                     <li class="breadcrumb-item"><a href="index.php" style="color: rgba(255,255,255,0.8); text-decoration: none;">Artikel</a></li>
-                    <li class="breadcrumb-item active" style="color: white;" aria-current="page"><?php echo htmlspecialchars($article['title']); ?></li>
+                    <li class="breadcrumb-item active" style="color: white;" aria-current="page"><?php echo htmlspecialchars($article['judul']); ?></li>
                 </ol>
             </nav>
         </div>
@@ -233,50 +241,47 @@ $currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
         <div class="row">
             <div class="col-lg-8">
                 <article class="article-content">
-                    <?php if (!empty($article['category_name'])): ?>
-                        <a href="index.php?category=<?php echo $article['category_id']; ?>" class="article-category">
-                            <?php echo htmlspecialchars($article['category_name']); ?>
+                    <?php if (!empty($article['kategori_nama'])): ?>
+                        <a href="index.php?category=<?php echo $article['kategori_id']; ?>" class="article-category">
+                            <?php echo htmlspecialchars($article['kategori_nama']); ?>
                         </a>
                     <?php endif; ?>
                     
-                    <h1 class="article-title"><?php echo htmlspecialchars($article['title']); ?></h1>
+                    <h1 class="article-title"><?php echo htmlspecialchars($article['judul']); ?></h1>
                     
                     <div class="article-meta">
-                        <div class="article-meta-item">
-                            <i class="bi bi-calendar"></i>
-                            <span><?php echo date('d F Y', strtotime($article['published_at'])); ?></span>
-                        </div>
-                        <?php if (!empty($article['author_name'])): ?>
+                        <?php if (!empty($article['published_at'])): ?>
                             <div class="article-meta-item">
-                                <i class="bi bi-person"></i>
-                                <span><?php echo htmlspecialchars($article['author_name']); ?></span>
+                                <i class="bi bi-calendar"></i>
+                                <span><?php echo date('d F Y', strtotime($article['published_at'])); ?></span>
                             </div>
                         <?php endif; ?>
-                        <?php if (!empty($article['reading_time'])): ?>
+                        <?php if (!empty($article['penulis'])): ?>
+                            <div class="article-meta-item">
+                                <i class="bi bi-person"></i>
+                                <span><?php echo htmlspecialchars($article['penulis']); ?></span>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!empty($article['waktu_baca'])): ?>
                             <div class="article-meta-item">
                                 <i class="bi bi-clock"></i>
-                                <span><?php echo $article['reading_time']; ?> menit dibaca</span>
+                                <span><?php echo $article['waktu_baca']; ?> menit dibaca</span>
                             </div>
                         <?php endif; ?>
                         <div class="article-meta-item">
                             <i class="bi bi-eye"></i>
-                            <span><?php echo number_format($article['view_count']); ?> views</span>
+                            <span><?php echo number_format($article['dilihat'] ?? 0); ?> views</span>
                         </div>
                     </div>
                     
-                    <?php if (!empty($article['featured_image'])): ?>
-                        <img src="<?php echo htmlspecialchars($article['featured_image']); ?>" 
-                             alt="<?php echo htmlspecialchars($article['featured_image_alt'] ?? $article['title']); ?>"
+                    <?php if (!empty($article['gambar'])): ?>
+                        <img src="<?php echo htmlspecialchars($article['gambar']); ?>" 
+                             alt="<?php echo htmlspecialchars($article['judul']); ?>"
                              class="article-featured-image">
-                        <?php if (!empty($article['featured_image_caption'])): ?>
-                            <p class="text-center text-muted" style="font-size: 14px; margin-top: -20px; margin-bottom: 30px;">
-                                <?php echo htmlspecialchars($article['featured_image_caption']); ?>
-                            </p>
-                        <?php endif; ?>
                     <?php endif; ?>
                     
                     <div class="article-body">
-                        <?php echo $article['content']; ?>
+                        <?php echo $article['konten']; ?>
                     </div>
                 </article>
                 
@@ -288,15 +293,15 @@ $currentUrl = $baseUrl . $_SERVER['REQUEST_URI'];
                             <?php foreach ($relatedArticles as $related): ?>
                                 <div class="col-md-4">
                                     <a href="detail.php?slug=<?php echo htmlspecialchars($related['slug']); ?>" class="related-article-card">
-                                        <?php if (!empty($related['featured_image'])): ?>
-                                            <img src="<?php echo htmlspecialchars($related['featured_image']); ?>" alt="<?php echo htmlspecialchars($related['title']); ?>">
+                                        <?php if (!empty($related['gambar'])): ?>
+                                            <img src="<?php echo htmlspecialchars($related['gambar']); ?>" alt="<?php echo htmlspecialchars($related['judul']); ?>">
                                         <?php else: ?>
                                             <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">
                                                 <i class="bi bi-file-text"></i>
                                             </div>
                                         <?php endif; ?>
                                         <div class="related-article-card-body">
-                                            <h5 class="related-article-card-title"><?php echo htmlspecialchars($related['title']); ?></h5>
+                                            <h5 class="related-article-card-title"><?php echo htmlspecialchars($related['judul']); ?></h5>
                                         </div>
                                     </a>
                                 </div>
