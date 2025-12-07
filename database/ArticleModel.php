@@ -164,16 +164,22 @@ class ArticleModel {
         $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
         $offset = ($options['page'] - 1) * $options['limit'];
         
+        // Pastikan limit dan offset adalah integer untuk keamanan
+        $limit = (int)$options['limit'];
+        $offset = (int)$offset;
+        
+        // Validasi order_by untuk mencegah SQL injection
+        $allowedOrderBy = ['published_at', 'created_at', 'updated_at', 'judul', 'dilihat'];
+        $orderBy = in_array($options['order_by'], $allowedOrderBy) ? $options['order_by'] : 'published_at';
+        $orderDir = strtoupper($options['order_dir']) === 'ASC' ? 'ASC' : 'DESC';
+        
         $sql = "SELECT a.*, 
                 k.nama AS kategori_nama, k.slug AS kategori_slug
                 FROM artikel a
                 LEFT JOIN kategori_artikel k ON a.kategori_id = k.id
                 $whereClause
-                ORDER BY a.{$options['order_by']} {$options['order_dir']}
-                LIMIT ? OFFSET ?";
-        
-        $params[] = $options['limit'];
-        $params[] = $offset;
+                ORDER BY a.{$orderBy} {$orderDir}
+                LIMIT {$limit} OFFSET {$offset}";
         
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
@@ -235,6 +241,9 @@ class ArticleModel {
     public function getPopularArticles($limit = 5) {
         $this->checkConnection();
         
+        // Pastikan limit adalah integer
+        $limit = (int)$limit;
+        
         $sql = "SELECT a.*, 
                 k.nama AS kategori_nama, k.slug AS kategori_slug
                 FROM artikel a
@@ -242,10 +251,9 @@ class ArticleModel {
                 WHERE a.status = 'published' 
                 AND (a.published_at IS NULL OR a.published_at <= NOW())
                 ORDER BY a.dilihat DESC
-                LIMIT ?";
+                LIMIT {$limit}";
         
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$limit]);
+        $stmt = $this->pdo->query($sql);
         
         return $stmt->fetchAll();
     }
@@ -256,6 +264,10 @@ class ArticleModel {
     public function getRelatedArticles($artikelId, $limit = 3) {
         $this->checkConnection();
         
+        // Pastikan limit adalah integer
+        $limit = (int)$limit;
+        $artikelId = (int)$artikelId;
+        
         $sql = "SELECT a.*, 
                 k.nama AS kategori_nama, k.slug AS kategori_slug
                 FROM artikel a
@@ -265,10 +277,10 @@ class ArticleModel {
                 AND a.status = 'published' 
                 AND (a.published_at IS NULL OR a.published_at <= NOW())
                 ORDER BY a.published_at DESC
-                LIMIT ?";
+                LIMIT {$limit}";
         
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$artikelId, $artikelId, $limit]);
+        $stmt->execute([$artikelId, $artikelId]);
         
         return $stmt->fetchAll();
     }
