@@ -25,24 +25,27 @@ $stats = [
     'komentar' => 0
 ];
 
-if ($pdo) {
+// Inisialisasi chart data
+$chartData = [];
+
+if ($pdo) { 
     try {
         $articleModel = new ArticleModel($pdo);
         
         // Total tayangan hari ini
-        $stmt = $pdo->query("SELECT SUM(dilihat) as total FROM artikel WHERE DATE(updated_at) = CURDATE()");
+        $stmt = $pdo->query("SELECT COALESCE(SUM(dilihat), 0) as total FROM artikel WHERE DATE(updated_at) = CURDATE()");
         $result = $stmt->fetch();
-        $stats['total_tayangan_hari_ini'] = $result['total'] ?? 0;
+        $stats['total_tayangan_hari_ini'] = (int)($result['total'] ?? 0);
         
         // Artikel terbit minggu ini
         $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'published' AND YEARWEEK(published_at) = YEARWEEK(CURDATE())");
         $result = $stmt->fetch();
-        $stats['artikel_terbit_minggu_ini'] = $result['total'] ?? 0;
+        $stats['artikel_terbit_minggu_ini'] = (int)($result['total'] ?? 0);
         
         // Draft / Menunggu Review
         $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'draft'");
         $result = $stmt->fetch();
-        $stats['draft_review'] = $result['total'] ?? 0;
+        $stats['draft_review'] = (int)($result['total'] ?? 0);
         
         // Social shares (simulasi)
         $stats['social_shares'] = rand(5000, 10000);
@@ -50,13 +53,12 @@ if ($pdo) {
         // Semua berita
         $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel");
         $result = $stmt->fetch();
-        $stats['semua_berita'] = $result['total'] ?? 0;
+        $stats['semua_berita'] = (int)($result['total'] ?? 0);
         
         // Komentar (simulasi - karena belum ada tabel komentar)
         $stats['komentar'] = rand(0, 10);
         
         // Data grafik (last 24 hours - simulasi)
-        $chartData = [];
         for ($i = 23; $i >= 0; $i--) {
             $hour = date('H:i', strtotime("-$i hours"));
             $chartData[] = [
@@ -66,20 +68,23 @@ if ($pdo) {
         }
         
     } catch (Exception $e) {
-        $chartData = [];
+        // Jika error, tetap gunakan nilai default yang sudah diinisialisasi
+        error_log("Dashboard error: " . $e->getMessage());
     }
-} else {
-    $chartData = [];
 }
 
 // Format angka
 function formatNumber($number) {
+    // Pastikan number adalah numeric dan bukan null
+    $number = $number ?? 0;
+    $number = (float)$number;
+    
     if ($number >= 1000000) {
         return number_format($number / 1000000, 1) . 'M';
     } elseif ($number >= 1000) {
         return number_format($number / 1000, 1) . 'K';
     }
-    return number_format($number);
+    return number_format($number, 0, '.', '');
 }
 
 // Trending topics (simulasi)
@@ -548,7 +553,7 @@ $tanggal = $hari[date('w')] . ', ' . date('d') . ' ' . $bulan[date('n')] . ' ' .
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <div>
-                            <div class="stat-value"><?php echo formatNumber($stats['total_tayangan_hari_ini']); ?></div>
+                            <div class="stat-value"><?php echo formatNumber($stats['total_tayangan_hari_ini'] ?? 0); ?></div>
                             <div class="stat-label">Total Tayangan (Hari ini)</div>
                         </div>
                         <div class="stat-icon blue">
@@ -560,7 +565,7 @@ $tanggal = $hari[date('w')] . ', ' . date('d') . ' ' . $bulan[date('n')] . ' ' .
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <div>
-                            <div class="stat-value"><?php echo $stats['artikel_terbit_minggu_ini']; ?></div>
+                            <div class="stat-value"><?php echo $stats['artikel_terbit_minggu_ini'] ?? 0; ?></div>
                             <div class="stat-label">Artikel Terbit (Minggu ini)</div>
                         </div>
                         <div class="stat-icon green">
@@ -572,7 +577,7 @@ $tanggal = $hari[date('w')] . ', ' . date('d') . ' ' . $bulan[date('n')] . ' ' .
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <div>
-                            <div class="stat-value"><?php echo $stats['draft_review']; ?></div>
+                            <div class="stat-value"><?php echo $stats['draft_review'] ?? 0; ?></div>
                             <div class="stat-label">Draft / Menunggu Review</div>
                         </div>
                         <div class="stat-icon yellow">
@@ -584,7 +589,7 @@ $tanggal = $hari[date('w')] . ', ' . date('d') . ' ' . $bulan[date('n')] . ' ' .
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <div>
-                            <div class="stat-value"><?php echo formatNumber($stats['social_shares']); ?></div>
+                            <div class="stat-value"><?php echo formatNumber($stats['social_shares'] ?? 0); ?></div>
                             <div class="stat-label">Social Shares</div>
                         </div>
                         <div class="stat-icon light-blue">
