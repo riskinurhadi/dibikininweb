@@ -45,7 +45,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 280px;
+        width: 240px;
         height: 100vh;
         background: var(--sidebar-bg);
         color: white;
@@ -56,36 +56,36 @@
     }
     
     .sidebar-logo {
-        padding: 24px 24px;
+        padding: 18px 20px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         background: rgba(255, 255, 255, 0.05);
     }
     
     .sidebar-logo i {
-        font-size: 32px;
+        font-size: 26px;
         color: var(--primary-color);
     }
     
     .sidebar-logo-text {
-        font-size: 22px;
+        font-size: 18px;
         font-weight: 700;
         letter-spacing: -0.5px;
     }
     
     .sidebar-menu {
-        padding: 20px 0;
+        padding: 16px 0;
     }
     
     .menu-section {
-        margin-bottom: 32px;
+        margin-bottom: 24px;
     }
     
     .menu-section-title {
-        padding: 0 24px 12px;
-        font-size: 11px;
+        padding: 0 20px 10px;
+        font-size: 10px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -95,12 +95,12 @@
     .menu-item {
         display: flex;
         align-items: center;
-        padding: 14px 24px;
+        padding: 11px 20px;
         color: rgba(255, 255, 255, 0.7);
         text-decoration: none;
         transition: all 0.2s ease;
         position: relative;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 500;
     }
     
@@ -151,7 +151,7 @@
        MAIN CONTENT
        ============================================ */
     .main-content {
-        margin-left: 280px;
+        margin-left: 240px;
         min-height: 100vh;
         transition: margin-left 0.3s ease;
     }
@@ -161,30 +161,30 @@
        ============================================ */
     .content-header {
         background: white;
-        padding: 24px 32px;
+        padding: 18px 24px;
         border-bottom: 1px solid var(--border-color);
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 16px;
+        gap: 12px;
         box-shadow: var(--card-shadow);
     }
     
     .header-left h1 {
-        font-size: 28px;
+        font-size: 22px;
         font-weight: 700;
         color: var(--text-primary);
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         letter-spacing: -0.5px;
     }
     
     .header-info {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         color: var(--text-secondary);
-        font-size: 14px;
+        font-size: 12px;
     }
     
     .status-dot {
@@ -239,12 +239,13 @@
         background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: white;
         border: none;
-        padding: 12px 24px;
-        border-radius: 10px;
+        padding: 9px 18px;
+        border-radius: 8px;
         font-weight: 600;
+        font-size: 13px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         text-decoration: none;
         transition: all 0.3s;
         box-shadow: 0 2px 8px rgba(24, 167, 210, 0.3);
@@ -260,7 +261,7 @@
        CONTENT BODY
        ============================================ */
     .content-body {
-        padding: 32px;
+        padding: 24px;
     }
     
     /* ============================================
@@ -281,14 +282,15 @@
     .card-header {
         background: white;
         border-bottom: 1px solid var(--border-color);
-        padding: 20px 24px;
+        padding: 16px 20px;
         border-radius: 12px 12px 0 0;
         font-weight: 600;
+        font-size: 15px;
         color: var(--text-primary);
     }
     
     .card-body {
-        padding: 24px;
+        padding: 20px;
     }
     
     /* ============================================
@@ -297,7 +299,8 @@
     .btn {
         border-radius: 8px;
         font-weight: 500;
-        padding: 10px 20px;
+        padding: 8px 16px;
+        font-size: 13px;
         transition: all 0.2s;
     }
     
@@ -388,15 +391,16 @@
         font-weight: 600;
         color: var(--text-primary);
         text-transform: uppercase;
-        font-size: 12px;
+        font-size: 11px;
         letter-spacing: 0.5px;
-        padding: 16px;
+        padding: 12px;
     }
     
     .table tbody td {
-        padding: 16px;
+        padding: 12px;
         vertical-align: middle;
         border-bottom: 1px solid var(--border-color);
+        font-size: 13px;
     }
     
     .table tbody tr:hover {
@@ -454,44 +458,55 @@
     }
     
     /* ============================================
-       STATS CARDS
+       STATS CARDS - Horizontal Layout
        ============================================ */
     .stat-card {
         background: white;
         border-radius: 12px;
-        padding: 24px;
+        padding: 18px 20px;
         box-shadow: var(--card-shadow);
         transition: all 0.3s;
         border-left: 4px solid var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        height: 100%;
     }
     
     .stat-card:hover {
-        transform: translateY(-4px);
+        transform: translateY(-2px);
         box-shadow: var(--card-shadow-hover);
     }
     
     .stat-card-icon {
         width: 56px;
         height: 56px;
+        min-width: 56px;
         border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 24px;
-        margin-bottom: 16px;
         background: rgba(24, 167, 210, 0.1);
         color: var(--primary-color);
+        flex-shrink: 0;
+    }
+    
+    .stat-card-content {
+        flex: 1;
+        min-width: 0;
     }
     
     .stat-card-value {
-        font-size: 32px;
+        font-size: 28px;
         font-weight: 700;
         color: var(--text-primary);
         margin-bottom: 4px;
+        line-height: 1.2;
     }
     
     .stat-card-label {
-        font-size: 14px;
+        font-size: 13px;
         color: var(--text-secondary);
         font-weight: 500;
     }
@@ -516,27 +531,44 @@
             display: block;
         }
         
-        .content-header {
-            padding: 20px;
+        .sidebar {
+            width: 240px;
         }
         
-        .content-body {
-            padding: 20px;
+        .main-content {
+            margin-left: 0;
         }
-    }
-    
-    @media (max-width: 576px) {
-        .header-left h1 {
-            font-size: 24px;
+        
+        .content-header {
+            padding: 16px;
         }
         
         .content-body {
             padding: 16px;
         }
+    }
+    
+    @media (max-width: 576px) {
+        .header-left h1 {
+            font-size: 20px;
+        }
+        
+        .content-body {
+            padding: 12px;
+        }
         
         .btn-tulis-berita {
-            padding: 10px 16px;
-            font-size: 14px;
+            padding: 8px 14px;
+            font-size: 12px;
+        }
+        
+        .stat-card {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .stat-card-icon {
+            margin-bottom: 0;
         }
     }
     

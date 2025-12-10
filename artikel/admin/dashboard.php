@@ -136,48 +136,6 @@ $pageTitle = 'Dashboard';
     <?php include 'includes/styles.php'; ?>
     
     <style>
-        .stat-card {
-            background: white;
-            border-radius: 16px;
-            padding: 28px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-            border-left: 4px solid var(--primary-color);
-            height: 100%;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-        
-        .stat-card-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, rgba(24, 167, 210, 0.1) 0%, rgba(13, 110, 253, 0.1) 100%);
-            color: var(--primary-color);
-        }
-        
-        .stat-card-value {
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-            letter-spacing: -1px;
-        }
-        
-        .stat-card-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-        
         .stat-card-change {
             font-size: 12px;
             color: var(--success-color);
@@ -221,17 +179,29 @@ $pageTitle = 'Dashboard';
         }
         
         .section-title {
-            font-size: 20px;
+            font-size: 17px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 20px;
+            margin-bottom: 0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         
         .section-title i {
             color: var(--primary-color);
+        }
+        
+        .recent-article-item {
+            padding: 12px;
+        }
+        
+        .recent-article-content h6 {
+            font-size: 14px;
+        }
+        
+        .recent-article-content .meta {
+            font-size: 11px;
         }
     </style>
 </head>
@@ -243,14 +213,16 @@ $pageTitle = 'Dashboard';
         
         <div class="content-body">
             <!-- Stat Cards -->
-            <div class="row g-4 mb-4">
+            <div class="row g-3 mb-4">
                 <div class="col-lg-3 col-md-6">
                     <div class="stat-card">
                         <div class="stat-card-icon">
                             <i class="bi bi-file-text"></i>
                         </div>
-                        <div class="stat-card-value"><?php echo number_format($stats['total_artikel'] ?? 0); ?></div>
-                        <div class="stat-card-label">Total Artikel</div>
+                        <div class="stat-card-content">
+                            <div class="stat-card-value"><?php echo number_format($stats['total_artikel'] ?? 0); ?></div>
+                            <div class="stat-card-label">Total Berita</div>
+                        </div>
                     </div>
                 </div>
                 
@@ -259,8 +231,10 @@ $pageTitle = 'Dashboard';
                         <div class="stat-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success-color);">
                             <i class="bi bi-check-circle"></i>
                         </div>
-                        <div class="stat-card-value"><?php echo number_format($stats['artikel_published'] ?? 0); ?></div>
-                        <div class="stat-card-label">Artikel Published</div>
+                        <div class="stat-card-content">
+                            <div class="stat-card-value"><?php echo number_format($stats['artikel_published'] ?? 0); ?></div>
+                            <div class="stat-card-label">Artikel Published</div>
+                        </div>
                     </div>
                 </div>
                 
@@ -269,8 +243,10 @@ $pageTitle = 'Dashboard';
                         <div class="stat-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color);">
                             <i class="bi bi-pencil"></i>
                         </div>
-                        <div class="stat-card-value"><?php echo number_format($stats['artikel_draft'] ?? 0); ?></div>
-                        <div class="stat-card-label">Draft Artikel</div>
+                        <div class="stat-card-content">
+                            <div class="stat-card-value"><?php echo number_format($stats['artikel_draft'] ?? 0); ?></div>
+                            <div class="stat-card-label">Draft Artikel</div>
+                        </div>
                     </div>
                 </div>
                 
@@ -279,8 +255,10 @@ $pageTitle = 'Dashboard';
                         <div class="stat-card-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--info-color);">
                             <i class="bi bi-eye"></i>
                         </div>
-                        <div class="stat-card-value"><?php echo formatNumber($stats['total_views'] ?? 0); ?></div>
-                        <div class="stat-card-label">Total Views</div>
+                        <div class="stat-card-content">
+                            <div class="stat-card-value"><?php echo formatNumber($stats['total_views'] ?? 0); ?></div>
+                            <div class="stat-card-label">Total Views</div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -180,10 +180,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo && $article) {
     <style>
         .form-card {
             background: white;
-            border-radius: 16px;
+            border-radius: 12px;
             box-shadow: var(--card-shadow);
             border: none;
-            margin-bottom: 24px;
+            margin-bottom: 18px;
             overflow: hidden;
             transition: all 0.3s;
         }
@@ -193,19 +193,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo && $article) {
         }
         
         .form-card-header {
-            padding: 24px 28px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--border-color);
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
         }
         
         .form-card-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-primary);
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         
         .form-card-title i {
@@ -213,35 +213,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo && $article) {
         }
         
         .form-card-body {
-            padding: 28px;
+            padding: 20px;
         }
         
         .form-label {
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 10px;
-            font-size: 14px;
+            margin-bottom: 8px;
+            font-size: 13px;
         }
         
         .form-control,
         .form-select {
             border: 2px solid var(--border-color);
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-size: 14px;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
             transition: all 0.2s;
         }
         
         .form-control:focus,
         .form-select:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(24, 167, 210, 0.1);
+            box-shadow: 0 0 0 3px rgba(24, 167, 210, 0.1);
             outline: none;
         }
         
         .form-control-lg {
-            font-size: 16px;
-            padding: 14px 18px;
+            font-size: 15px;
+            padding: 12px 16px;
         }
         
         .note-editor {
@@ -265,10 +265,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo && $article) {
         }
         
         .btn-action {
-            padding: 14px 24px;
-            border-radius: 10px;
+            padding: 10px 20px;
+            border-radius: 8px;
             font-weight: 600;
-            font-size: 15px;
+            font-size: 13px;
             transition: all 0.3s;
             border: none;
         }

@@ -92,13 +92,13 @@ $pageTitle = 'Semua Artikel';
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 18px;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 12px;
         }
         
         .page-header h2 {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 700;
             color: var(--text-primary);
             margin: 0;
@@ -107,8 +107,8 @@ $pageTitle = 'Semua Artikel';
         .filter-section {
             background: white;
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
+            padding: 16px;
+            margin-bottom: 18px;
             box-shadow: var(--card-shadow);
         }
         

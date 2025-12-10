@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         .login-left {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
-            padding: 80px 50px;
+            padding: 50px 35px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -138,64 +138,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         }
         
         .login-left .icon-wrapper {
-            width: 140px;
-            height: 140px;
+            width: 100px;
+            height: 100px;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 40px;
-            font-size: 56px;
+            margin-bottom: 28px;
+            font-size: 42px;
             border: 2px solid rgba(255, 255, 255, 0.2);
         }
         
         .login-left h2 {
             font-weight: 700;
-            margin-bottom: 20px;
-            font-size: 36px;
+            margin-bottom: 16px;
+            font-size: 28px;
             letter-spacing: -1px;
         }
         
         .login-left p {
             opacity: 0.95;
             line-height: 1.8;
-            font-size: 16px;
+            font-size: 14px;
         }
         
         .login-right {
-            padding: 60px 50px;
+            padding: 40px 35px;
         }
         
         .login-form-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 28px;
         }
         
         .login-form-header h3 {
             font-weight: 700;
             color: #1a1d29;
-            margin-bottom: 10px;
-            font-size: 28px;
+            margin-bottom: 8px;
+            font-size: 22px;
             letter-spacing: -0.5px;
         }
         
         .login-form-header p {
             color: #6c757d;
-            font-size: 15px;
+            font-size: 13px;
         }
         
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 18px;
         }
         
         .form-group label {
             font-weight: 600;
             color: #1a1d29;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: block;
-            font-size: 14px;
+            font-size: 13px;
         }
         
         .input-group {
@@ -206,42 +206,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
             background: #f8f9fa;
             border: 2px solid #e9ecef;
             border-right: none;
-            border-radius: 12px 0 0 12px;
+            border-radius: 10px 0 0 10px;
             color: #6c757d;
-            padding: 0 20px;
+            padding: 0 16px;
         }
         
         .form-control {
-            height: 56px;
-            border-radius: 12px;
+            height: 46px;
+            border-radius: 10px;
             border: 2px solid #e9ecef;
-            padding: 14px 20px;
-            font-size: 15px;
+            padding: 11px 16px;
+            font-size: 14px;
             transition: all 0.3s;
         }
         
         .form-control.input-with-icon {
             border-left: none;
-            border-radius: 0 12px 12px 0;
+            border-radius: 0 10px 10px 0;
         }
         
         .form-control:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(24, 167, 210, 0.1);
+            box-shadow: 0 0 0 3px rgba(24, 167, 210, 0.1);
             outline: none;
         }
         
         .btn-login {
             width: 100%;
-            height: 56px;
+            height: 46px;
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             color: white;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 14px;
             transition: all 0.3s;
-            margin-top: 10px;
+            margin-top: 8px;
             box-shadow: 0 4px 12px rgba(24, 167, 210, 0.3);
         }
         
