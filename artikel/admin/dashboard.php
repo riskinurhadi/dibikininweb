@@ -1,84 +1,79 @@
 <?php
 /**
- * Dashboard Admin Redaksi
- * Dashboard untuk manage artikel/berita
+ * Dashboard Admin
+ * Modern & Professional Design
  */
 
 session_start();
 
-// Cek apakah user sudah login
+// Cek login
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: index.php');
     exit;
 }
 
 require_once __DIR__ . '/../../koneksi.php';
-require_once __DIR__ . '/../../database/ArticleModel.php';
 
-// Inisialisasi
+// Inisialisasi stats
 $stats = [
-    'total_tayangan_hari_ini' => 0,
-    'artikel_terbit_minggu_ini' => 0,
-    'draft_review' => 0,
-    'social_shares' => 0,
-    'semua_berita' => 0,
-    'komentar' => 0
+    'total_artikel' => 0,
+    'artikel_published' => 0,
+    'artikel_draft' => 0,
+    'total_views' => 0,
+    'artikel_minggu_ini' => 0
 ];
 
-// Inisialisasi chart data
-$chartData = [];
+$recentArticles = [];
+$popularArticles = [];
 
-if ($pdo) { 
+// Query stats jika database tersedia
+if ($pdo) {
     try {
-        $articleModel = new ArticleModel($pdo);
-        
-        // Total tayangan hari ini
-        $stmt = $pdo->query("SELECT COALESCE(SUM(dilihat), 0) as total FROM artikel WHERE DATE(updated_at) = CURDATE()");
-        $result = $stmt->fetch();
-        $stats['total_tayangan_hari_ini'] = (int)($result['total'] ?? 0);
-        
-        // Artikel terbit minggu ini
-        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'published' AND YEARWEEK(published_at) = YEARWEEK(CURDATE())");
-        $result = $stmt->fetch();
-        $stats['artikel_terbit_minggu_ini'] = (int)($result['total'] ?? 0);
-        
-        // Draft / Menunggu Review
-        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'draft'");
-        $result = $stmt->fetch();
-        $stats['draft_review'] = (int)($result['total'] ?? 0);
-        
-        // Social shares (simulasi)
-        $stats['social_shares'] = rand(5000, 10000);
-        
-        // Semua berita
+        // Total artikel
         $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel");
-        $result = $stmt->fetch();
-        $stats['semua_berita'] = (int)($result['total'] ?? 0);
+        $stats['total_artikel'] = (int)$stmt->fetchColumn();
         
-        // Komentar (simulasi - karena belum ada tabel komentar)
-        $stats['komentar'] = rand(0, 10);
+        // Artikel published
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'published'");
+        $stats['artikel_published'] = (int)$stmt->fetchColumn();
         
-        // Data grafik (last 24 hours - simulasi)
-        for ($i = 23; $i >= 0; $i--) {
-            $hour = date('H:i', strtotime("-$i hours"));
-            $chartData[] = [
-                'time' => $hour,
-                'value' => rand(1000, 10000)
-            ];
-        }
+        // Artikel draft
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'draft'");
+        $stats['artikel_draft'] = (int)$stmt->fetchColumn();
+        
+        // Total views
+        $stmt = $pdo->query("SELECT COALESCE(SUM(dilihat), 0) as total FROM artikel");
+        $stats['total_views'] = (int)$stmt->fetchColumn();
+        
+        // Artikel minggu ini
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'published' AND YEARWEEK(published_at) = YEARWEEK(CURDATE())");
+        $stats['artikel_minggu_ini'] = (int)$stmt->fetchColumn();
+        
+        // Artikel terbaru
+        $stmt = $pdo->query("SELECT a.*, k.nama AS kategori_nama 
+                            FROM artikel a 
+                            LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+                            ORDER BY a.created_at DESC 
+                            LIMIT 5");
+        $recentArticles = $stmt->fetchAll();
+        
+        // Artikel populer
+        $stmt = $pdo->query("SELECT a.*, k.nama AS kategori_nama 
+                            FROM artikel a 
+                            LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+                            WHERE a.status = 'published'
+                            ORDER BY a.dilihat DESC 
+                            LIMIT 5");
+        $popularArticles = $stmt->fetchAll();
         
     } catch (Exception $e) {
-        // Jika error, tetap gunakan nilai default yang sudah diinisialisasi
-        error_log("Dashboard error: " . $e->getMessage());
+        // Error handling
     }
 }
 
 // Format angka
 function formatNumber($number) {
-    // Pastikan number adalah numeric dan bukan null
-    $number = $number ?? 0;
-    $number = (float)$number;
-    
+    $number = (int)($number ?? 0);
     if ($number >= 1000000) {
         return number_format($number / 1000000, 1) . 'M';
     } elseif ($number >= 1000) {
@@ -87,24 +82,14 @@ function formatNumber($number) {
     return number_format($number, 0, '.', '');
 }
 
-// Trending topics (simulasi)
-$trendingTopics = [
-    ['name' => '#TimnasDay', 'count' => 12500, 'trend' => 'up'],
-    ['name' => '#Pilpres2024', 'count' => 8200, 'trend' => 'up'],
-    ['name' => '#CryptoCrash', 'count' => 5100, 'trend' => 'down']
-];
-
-// Tanggal Indonesia
-$hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-$bulan = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-$tanggal = $hari[date('w')] . ', ' . date('d') . ' ' . $bulan[date('n')] . ' ' . date('Y');
+$pageTitle = 'Dashboard';
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Redaksi | dibikininweb</title>
+    <title><?php echo htmlspecialchars($pageTitle); ?> | Admin</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -115,592 +100,278 @@ $tanggal = $hari[date('w')] . ', ' . date('d') . ' ' . $bulan[date('n')] . ' ' .
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Include Styles -->
     <?php include 'includes/styles.php'; ?>
     
     <style>
-        :root {
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --info-color: #3b82f6;
-        }
-        
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 260px;
-            height: 100vh;
-            background: var(--sidebar-bg);
-            color: white;
-            overflow-y: auto;
-            z-index: 1000;
-            transition: transform 0.3s;
-        }
-        
-        .sidebar-logo {
-            padding: 24px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .sidebar-logo i {
-            font-size: 28px;
-            color: #ef4444;
-        }
-        
-        .sidebar-logo-text {
-            font-size: 20px;
-            font-weight: 700;
-        }
-        
-        .sidebar-menu {
-            padding: 20px 0;
-        }
-        
-        .menu-section {
-            margin-bottom: 30px;
-        }
-        
-        .menu-section-title {
-            padding: 0 20px;
-            margin-bottom: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: rgba(255, 255, 255, 0.5);
-        }
-        
-        .menu-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: all 0.2s;
-            position: relative;
-        }
-        
-        .menu-item:hover {
-            background: var(--sidebar-hover);
-            color: white;
-        }
-        
-        .menu-item.active {
-            background: var(--sidebar-active);
-            color: white;
-        }
-        
-        .menu-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: #ef4444;
-        }
-        
-        .menu-item i {
-            width: 24px;
-            margin-right: 12px;
-            font-size: 18px;
-        }
-        
-        .menu-item-text {
-            flex: 1;
-        }
-        
-        .badge-menu {
-            background: #ef4444;
-            color: white;
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-        
-        /* Main Content */
-        .main-content {
-            margin-left: 260px;
-            min-height: 100vh;
-        }
-        
-        /* Header */
-        .content-header {
-            background: white;
-            padding: 24px 32px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        
-        .header-left h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-        
-        .header-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #10b981;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        
-        .notification-btn {
-            position: relative;
-            background: none;
-            border: none;
-            font-size: 20px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 8px;
-        }
-        
-        .notification-dot {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 8px;
-            height: 8px;
-            background: #ef4444;
-            border-radius: 50%;
-        }
-        
-        .btn-tulis-berita {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            transition: background 0.2s;
-        }
-        
-        .btn-tulis-berita:hover {
-            background: #dc2626;
-            color: white;
-        }
-        
-        /* Content Body */
-        .content-body {
-            padding: 32px;
-        }
-        
-        /* Stat Cards */
-        .stat-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-        
         .stat-card {
             background: white;
-            border-radius: 12px;
-            padding: 24px;
+            border-radius: 16px;
+            padding: 28px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border-left: 4px solid var(--primary-color);
+            height: 100%;
         }
         
-        .stat-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
         
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
+        .stat-card-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 28px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, rgba(24, 167, 210, 0.1) 0%, rgba(13, 110, 253, 0.1) 100%);
+            color: var(--primary-color);
         }
         
-        .stat-icon.blue { background: #dbeafe; color: #1e40af; }
-        .stat-icon.green { background: #d1fae5; color: #065f46; }
-        .stat-icon.yellow { background: #fef3c7; color: #92400e; }
-        .stat-icon.light-blue { background: #e0f2fe; color: #0c4a6e; }
-        
-        .stat-value {
-            font-size: 32px;
+        .stat-card-value {
+            font-size: 36px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 4px;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
         }
         
-        .stat-label {
+        .stat-card-label {
             font-size: 14px;
             color: var(--text-secondary);
+            font-weight: 500;
         }
         
-        /* Chart Section */
-        .chart-section {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 32px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .chart-header {
+        .stat-card-change {
+            font-size: 12px;
+            color: var(--success-color);
+            margin-top: 8px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            gap: 4px;
         }
         
-        .chart-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .chart-select {
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 6px 12px;
-            font-size: 14px;
-            background: white;
-            color: var(--text-primary);
-        }
-        
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
-        
-        /* Trending Section */
-        .trending-section {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .trending-header {
+        .recent-article-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .trending-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .trending-list {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .trending-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
+            gap: 16px;
+            padding: 16px;
             border-bottom: 1px solid var(--border-color);
+            text-decoration: none;
+            color: inherit;
+            transition: background 0.2s;
         }
         
-        .trending-item:last-child {
+        .recent-article-item:last-child {
             border-bottom: none;
         }
         
-        .trending-item-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .recent-article-item:hover {
+            background: var(--main-bg);
+            color: inherit;
+            border-radius: 8px;
         }
         
-        .trending-number {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-secondary);
-            min-width: 24px;
-        }
-        
-        .trending-name {
+        .recent-article-content h6 {
+            font-size: 15px;
             font-weight: 600;
+            margin-bottom: 4px;
             color: var(--text-primary);
         }
         
-        .trending-count {
+        .recent-article-content .meta {
+            font-size: 12px;
             color: var(--text-secondary);
-            font-size: 14px;
         }
         
-        .trend-arrow {
-            font-size: 16px;
-            margin-left: 8px;
-        }
-        
-        .trend-arrow.up {
-            color: #10b981;
-        }
-        
-        .trend-arrow.down {
-            color: #ef4444;
-        }
-        
-        /* Mobile Menu Toggle */
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: var(--sidebar-bg);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
+        .section-title {
             font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        /* Responsive */
-        @media (max-width: 992px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .mobile-menu-toggle {
-                display: block;
-            }
-            
-            .content-header {
-                padding: 20px;
-            }
-            
-            .content-body {
-                padding: 20px;
-            }
-            
-            .stat-cards {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .stat-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .header-left h1 {
-                font-size: 24px;
-            }
-            
-            .stat-value {
-                font-size: 24px;
-            }
+        .section-title i {
+            color: var(--primary-color);
         }
     </style>
 </head>
 <body>
     <?php include 'includes/sidebar.php'; ?>
     
-    <!-- Main Content -->
     <main class="main-content">
         <?php include 'includes/header.php'; ?>
         
-        <!-- Content Body -->
         <div class="content-body">
             <!-- Stat Cards -->
-            <div class="stat-cards">
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div>
-                            <div class="stat-value"><?php echo formatNumber($stats['total_tayangan_hari_ini'] ?? 0); ?></div>
-                            <div class="stat-label">Total Tayangan (Hari ini)</div>
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <i class="bi bi-file-text"></i>
                         </div>
-                        <div class="stat-icon blue">
-                            <i class="bi bi-eye"></i>
-                        </div>
+                        <div class="stat-card-value"><?php echo number_format($stats['total_artikel']); ?></div>
+                        <div class="stat-card-label">Total Artikel</div>
                     </div>
                 </div>
                 
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div>
-                            <div class="stat-value"><?php echo $stats['artikel_terbit_minggu_ini'] ?? 0; ?></div>
-                            <div class="stat-label">Artikel Terbit (Minggu ini)</div>
-                        </div>
-                        <div class="stat-icon green">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card" style="border-left-color: var(--success-color);">
+                        <div class="stat-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success-color);">
                             <i class="bi bi-check-circle"></i>
                         </div>
+                        <div class="stat-card-value"><?php echo number_format($stats['artikel_published']); ?></div>
+                        <div class="stat-card-label">Artikel Published</div>
                     </div>
                 </div>
                 
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div>
-                            <div class="stat-value"><?php echo $stats['draft_review'] ?? 0; ?></div>
-                            <div class="stat-label">Draft / Menunggu Review</div>
-                        </div>
-                        <div class="stat-icon yellow">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card" style="border-left-color: var(--warning-color);">
+                        <div class="stat-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color);">
                             <i class="bi bi-pencil"></i>
                         </div>
+                        <div class="stat-card-value"><?php echo number_format($stats['artikel_draft']); ?></div>
+                        <div class="stat-card-label">Draft Artikel</div>
                     </div>
                 </div>
                 
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div>
-                            <div class="stat-value"><?php echo formatNumber($stats['social_shares'] ?? 0); ?></div>
-                            <div class="stat-label">Social Shares</div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card" style="border-left-color: var(--info-color);">
+                        <div class="stat-card-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--info-color);">
+                            <i class="bi bi-eye"></i>
                         </div>
-                        <div class="stat-icon light-blue">
-                            <i class="bi bi-share"></i>
+                        <div class="stat-card-value"><?php echo formatNumber($stats['total_views']); ?></div>
+                        <div class="stat-card-label">Total Views</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Articles & Popular Articles -->
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="section-title mb-0">
+                                <i class="bi bi-clock-history"></i>
+                                Artikel Terbaru
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <?php if (empty($recentArticles)): ?>
+                                <div class="text-center py-5">
+                                    <i class="bi bi-inbox" style="font-size: 48px; color: #dee2e6;"></i>
+                                    <p class="text-muted mt-3">Belum ada artikel</p>
+                                </div>
+                            <?php else: ?>
+                                <?php foreach ($recentArticles as $article): ?>
+                                    <a href="edit-berita.php?id=<?php echo $article['id']; ?>" class="recent-article-item">
+                                        <div class="flex-grow-1">
+                                            <h6 class="recent-article-content">
+                                                <?php echo htmlspecialchars($article['judul']); ?>
+                                            </h6>
+                                            <div class="meta">
+                                                <span><i class="bi bi-calendar me-1"></i><?php echo date('d M Y', strtotime($article['created_at'])); ?></span>
+                                                <span class="ms-3">
+                                                    <?php if ($article['status'] === 'published'): ?>
+                                                        <span class="badge bg-success">Published</span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-secondary">Draft</span>
+                                                    <?php endif; ?>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <i class="bi bi-chevron-right text-secondary"></i>
+                                    </a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="section-title mb-0">
+                                <i class="bi bi-fire"></i>
+                                Artikel Populer
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <?php if (empty($popularArticles)): ?>
+                                <div class="text-center py-5">
+                                    <i class="bi bi-inbox" style="font-size: 48px; color: #dee2e6;"></i>
+                                    <p class="text-muted mt-3">Belum ada artikel populer</p>
+                                </div>
+                            <?php else: ?>
+                                <?php foreach ($popularArticles as $article): ?>
+                                    <a href="../detail.php?slug=<?php echo htmlspecialchars($article['slug']); ?>" 
+                                       target="_blank"
+                                       class="recent-article-item">
+                                        <div class="flex-grow-1">
+                                            <h6 class="recent-article-content">
+                                                <?php echo htmlspecialchars($article['judul']); ?>
+                                            </h6>
+                                            <div class="meta">
+                                                <span><i class="bi bi-eye me-1"></i><?php echo number_format($article['dilihat'] ?? 0); ?> views</span>
+                                                <span class="ms-3"><i class="bi bi-calendar me-1"></i><?php echo date('d M Y', strtotime($article['published_at'])); ?></span>
+                                            </div>
+                                        </div>
+                                        <i class="bi bi-chevron-right text-secondary"></i>
+                                    </a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Chart Section -->
-            <div class="chart-section">
-                <div class="chart-header">
-                    <h2 class="chart-title">Statistik Pembaca (Realtime)</h2>
-                    <select class="chart-select">
-                        <option>24 Jam Terakhir</option>
-                        <option>7 Hari Terakhir</option>
-                        <option>30 Hari Terakhir</option>
-                    </select>
-                </div>
-                <div class="chart-container">
-                    <canvas id="readerChart"></canvas>
-                </div>
-            </div>
-            
-            <!-- Trending Topics -->
-            <div class="trending-section">
-                <div class="trending-header">
-                    <h2 class="trending-title">Trending Topik</h2>
-                    <i class="bi bi-fire text-danger"></i>
-                </div>
-                <ul class="trending-list">
-                    <?php foreach ($trendingTopics as $index => $topic): ?>
-                    <li class="trending-item">
-                        <div class="trending-item-left">
-                            <span class="trending-number"><?php echo $index + 1; ?>.</span>
-                            <div>
-                                <div class="trending-name"><?php echo htmlspecialchars($topic['name']); ?></div>
-                                <div class="trending-count">
-                                    <?php echo formatNumber($topic['count']); ?> Artikel
-                                    <i class="bi bi-arrow-<?php echo $topic['trend'] === 'up' ? 'up' : 'down'; ?> trend-arrow <?php echo $topic['trend']; ?>"></i>
+            <!-- Quick Actions -->
+            <div class="row g-4 mt-2">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="section-title mb-0">
+                                <i class="bi bi-lightning"></i>
+                                Quick Actions
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <a href="tulis-berita.php" class="btn btn-primary w-100">
+                                        <i class="bi bi-pencil-square me-2"></i>Tulis Artikel Baru
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="semua-berita.php" class="btn btn-outline-primary w-100">
+                                        <i class="bi bi-list-ul me-2"></i>Lihat Semua Artikel
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="../index.php" target="_blank" class="btn btn-outline-success w-100">
+                                        <i class="bi bi-eye me-2"></i>Lihat Website
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="logout.php" class="btn btn-outline-danger w-100">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <?php endforeach; ?>
-                </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Chart.js
-        const ctx = document.getElementById('readerChart').getContext('2d');
-        const chartData = <?php echo json_encode($chartData); ?>;
-        
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: chartData.map(item => item.time),
-                datasets: [{
-                    label: 'Pembaca',
-                    data: chartData.map(item => item.value),
-                    borderColor: '#ef4444',
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHoverRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        padding: 12,
-                        cornerRadius: 8,
-                        displayColors: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                if (value >= 1000) {
-                                    return (value / 1000).toFixed(1) + 'k';
-                                }
-                                return value;
-                            }
-                        },
-                        grid: {
-                            color: '#f1f5f9'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
-        });
-    </script>
 </body>
 </html>

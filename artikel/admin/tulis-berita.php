@@ -143,37 +143,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
     <style>
         .form-card {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: none;
             margin-bottom: 24px;
             overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .form-card:hover {
+            box-shadow: var(--card-shadow-hover);
         }
         
         .form-card-header {
-            padding: 20px 24px;
+            padding: 24px 28px;
             border-bottom: 1px solid var(--border-color);
-            background: #fafafa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
         }
         
         .form-card-title {
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-primary);
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-card-title i {
+            color: var(--primary-color);
         }
         
         .form-card-body {
-            padding: 24px;
+            padding: 28px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .form-control,
+        .form-select {
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(24, 167, 210, 0.1);
+            outline: none;
+        }
+        
+        .form-control-lg {
+            font-size: 16px;
+            padding: 14px 18px;
         }
         
         .note-editor {
-            border-radius: 8px;
-            border: 1px solid var(--border-color) !important;
+            border-radius: 12px;
+            border: 2px solid var(--border-color) !important;
+            overflow: hidden;
+        }
+        
+        .note-toolbar {
+            background: #f8f9fa;
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px;
+        }
+        
+        .note-editing-area {
+            background: white;
         }
         
         .note-dropdown-menu {
             z-index: 9999 !important;
+        }
+        
+        .btn-action {
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, var(--success-color) 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--text-secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4a5568;
+            color: white;
+        }
+        
+        .form-text {
+            font-size: 12px;
+            color: var(--text-secondary);
         }
     </style>
 </head>

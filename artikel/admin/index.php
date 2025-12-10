@@ -1,6 +1,7 @@
 <?php
 /**
- * Halaman Login Admin untuk Manage Berita/Artikel
+ * Halaman Login Admin
+ * Modern & Professional Design
  */
 
 session_start();
@@ -21,13 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     if (empty($username) || empty($password)) {
         $error = 'Username dan password harus diisi!';
     } else {
-        // Cek kredensial (gunakan kredensial default: admin/admin123)
-        // Untuk production, sebaiknya menggunakan database untuk menyimpan admin users
+        // Kredensial default
         $valid_username = 'admin';
-        $valid_password = 'admin123'; // Password default, sebaiknya di-hash di production
-        
-        // Alternatif: bisa menggunakan password_hash() dan password_verify() untuk keamanan lebih baik
-        // Untuk sementara, kita gunakan plain text untuk kemudahan
+        $valid_password = 'admin123';
         
         if ($username === $valid_username && $password === $valid_password) {
             $_SESSION['admin_logged_in'] = true;
@@ -47,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin - Manage Artikel | dibikininweb</title>
+    <title>Login Admin | dibikininweb</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -56,11 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary-color: #18A7D2;
+            --primary-dark: #0d6efd;
         }
         
         * {
@@ -70,60 +68,104 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         }
         
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', 'Poppins', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: move 20s linear infinite;
+        }
+        
+        @keyframes move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
         }
         
         .login-container {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            max-width: 900px;
+            max-width: 1000px;
             width: 100%;
+            position: relative;
+            z-index: 1;
         }
         
         .login-left {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #0d6efd 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
-            padding: 60px 40px;
+            padding: 80px 50px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-left::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: move 20s linear infinite;
+        }
+        
+        .login-left > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-left .icon-wrapper {
+            width: 140px;
+            height: 140px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            font-size: 56px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
         
         .login-left h2 {
             font-weight: 700;
             margin-bottom: 20px;
-            font-size: 32px;
+            font-size: 36px;
+            letter-spacing: -1px;
         }
         
         .login-left p {
-            opacity: 0.9;
+            opacity: 0.95;
             line-height: 1.8;
-        }
-        
-        .login-left .icon-wrapper {
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
-            font-size: 48px;
+            font-size: 16px;
         }
         
         .login-right {
-            padding: 60px 40px;
+            padding: 60px 50px;
         }
         
         .login-form-header {
@@ -133,63 +175,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         
         .login-form-header h3 {
             font-weight: 700;
-            color: #32353a;
+            color: #1a1d29;
             margin-bottom: 10px;
+            font-size: 28px;
+            letter-spacing: -0.5px;
         }
         
         .login-form-header p {
             color: #6c757d;
+            font-size: 15px;
         }
         
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 24px;
         }
         
         .form-group label {
             font-weight: 600;
-            color: #32353a;
-            margin-bottom: 8px;
+            color: #1a1d29;
+            margin-bottom: 10px;
             display: block;
+            font-size: 14px;
         }
         
-        .form-control {
-            height: 50px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-            padding: 12px 20px;
-            font-size: 15px;
-            transition: all 0.3s;
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(24, 167, 210, 0.25);
+        .input-group {
+            position: relative;
         }
         
         .input-group-text {
             background: #f8f9fa;
             border: 2px solid #e9ecef;
             border-right: none;
-            border-radius: 10px 0 0 10px;
+            border-radius: 12px 0 0 12px;
             color: #6c757d;
+            padding: 0 20px;
+        }
+        
+        .form-control {
+            height: 56px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            padding: 14px 20px;
+            font-size: 15px;
+            transition: all 0.3s;
         }
         
         .form-control.input-with-icon {
             border-left: none;
-            border-radius: 0 10px 10px 0;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(24, 167, 210, 0.1);
+            outline: none;
         }
         
         .btn-login {
             width: 100%;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, #0d6efd 100%);
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             color: white;
             font-weight: 600;
             font-size: 16px;
             transition: all 0.3s;
             margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(24, 167, 210, 0.3);
         }
         
         .btn-login:hover {
@@ -198,73 +251,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
             color: white;
         }
         
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        
         .alert {
-            border-radius: 10px;
+            border-radius: 12px;
             border: none;
+            padding: 16px 20px;
+        }
+        
+        .default-credentials {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+            font-size: 13px;
+            color: #495057;
+            border: 1px solid #e9ecef;
+        }
+        
+        .default-credentials strong {
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .default-credentials code {
+            background: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--primary-color);
+            font-weight: 600;
         }
         
         .back-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 24px;
         }
         
         .back-link a {
             color: var(--primary-color);
             text-decoration: none;
             font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
         }
         
         .back-link a:hover {
+            color: var(--primary-dark);
             text-decoration: underline;
         }
         
         @media (max-width: 768px) {
             .login-left {
-                padding: 40px 30px;
+                display: none;
             }
             
             .login-right {
                 padding: 40px 30px;
             }
             
-            .login-left {
-                display: none;
+            .login-form-header h3 {
+                font-size: 24px;
             }
-        }
-        
-        .default-credentials {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 13px;
-            color: #6c757d;
-        }
-        
-        .default-credentials strong {
-            color: var(--primary-color);
         }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="row g-0 h-100">
-            <!-- Left Side - Info -->
+            <!-- Left Side - Branding -->
             <div class="col-lg-5 login-left d-none d-lg-flex">
                 <div>
                     <div class="icon-wrapper">
                         <i class="bi bi-shield-lock-fill"></i>
                     </div>
                     <h2>Admin Panel</h2>
-                    <p>Login ke dashboard admin untuk mengelola artikel, berita, dan konten website Anda.</p>
+                    <p>Kelola artikel, berita, dan konten website Anda dengan mudah melalui dashboard admin yang modern dan profesional.</p>
                 </div>
             </div>
             
             <!-- Right Side - Login Form -->
             <div class="col-lg-7 login-right">
                 <div class="login-form-header">
-                    <h3><i class="bi bi-box-arrow-in-right me-2"></i>Login Admin</h3>
-                    <p>Masukkan kredensial Anda untuk mengakses panel admin</p>
+                    <h3><i class="bi bi-box-arrow-in-right me-2"></i>Masuk ke Admin</h3>
+                    <p>Silakan masukkan kredensial Anda untuk mengakses panel admin</p>
                 </div>
                 
                 <?php if ($error): ?>
@@ -303,14 +377,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                     </div>
                     
                     <button type="submit" name="login" class="btn btn-login">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Masuk
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Masuk ke Dashboard
                     </button>
                 </form>
                 
                 <div class="default-credentials">
-                    <strong>Kredensial Default:</strong><br>
-                    Username: <code>admin</code><br>
-                    Password: <code>admin123</code>
+                    <strong>Kredensial Default:</strong>
+                    <div class="mt-2">
+                        Username: <code>admin</code><br>
+                        Password: <code>admin123</code>
+                    </div>
                 </div>
                 
                 <div class="back-link">
@@ -326,4 +402,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
