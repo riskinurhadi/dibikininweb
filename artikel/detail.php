@@ -37,7 +37,7 @@ if ($pdo) {
         $updateStmt = $pdo->prepare("UPDATE artikel SET dilihat = dilihat + 1 WHERE id = ?");
         $updateStmt->execute([$article['id']]);
         
-        // Ambil artikel terkait (berdasarkan kategori yang sama)
+        // Ambil artikel terkait (berdasarkan kategori yang sama, atau artikel terbaru jika tidak ada)
         if ($article['kategori_id']) {
             $relatedSql = "SELECT a.*, k.nama AS kategori_nama 
                            FROM artikel a 
@@ -49,6 +49,20 @@ if ($pdo) {
                            LIMIT 3";
             $relatedStmt = $pdo->prepare($relatedSql);
             $relatedStmt->execute([$article['kategori_id'], $article['id']]);
+            $relatedArticles = $relatedStmt->fetchAll();
+        }
+        
+        // Jika tidak ada artikel dengan kategori yang sama, ambil 3 artikel terbaru lainnya
+        if (empty($relatedArticles)) {
+            $relatedSql = "SELECT a.*, k.nama AS kategori_nama 
+                           FROM artikel a 
+                           LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+                           WHERE a.id != ? 
+                           AND a.status = 'published' 
+                           ORDER BY COALESCE(a.published_at, a.created_at) DESC 
+                           LIMIT 3";
+            $relatedStmt = $pdo->prepare($relatedSql);
+            $relatedStmt->execute([$article['id']]);
             $relatedArticles = $relatedStmt->fetchAll();
         }
         
@@ -163,7 +177,25 @@ if ($pdo) {
         }
         
         .related-articles {
-            margin-top: 40px;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 2px solid var(--border-color);
+        }
+        
+        .related-articles h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+        }
+        
+        .related-articles .article-card {
+            height: 100%;
+        }
+        
+        .related-articles .article-card-meta {
+            margin-top: 10px;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -230,7 +262,7 @@ if ($pdo) {
                         <h3 class="mb-4">Artikel Terkait</h3>
                         <div class="row g-4">
                             <?php foreach ($relatedArticles as $related): ?>
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6">
                                     <a href="detail.php?slug=<?php echo htmlspecialchars($related['slug']); ?>" class="article-card">
                                         <?php if (!empty($related['gambar'])): ?>
                                             <img src="<?php echo htmlspecialchars($related['gambar']); ?>" alt="<?php echo htmlspecialchars($related['judul']); ?>">
@@ -241,6 +273,12 @@ if ($pdo) {
                                         <?php endif; ?>
                                         <div class="article-card-body">
                                             <h5 class="article-card-title"><?php echo htmlspecialchars($related['judul']); ?></h5>
+                                            <div class="article-card-meta">
+                                                <span><i class="bi bi-calendar me-1"></i><?php echo date('d M Y', strtotime($related['published_at'] ?: $related['created_at'])); ?></span>
+                                                <?php if (!empty($related['kategori_nama'])): ?>
+                                                    <span class="ms-2"><i class="bi bi-tag me-1"></i><?php echo htmlspecialchars($related['kategori_nama']); ?></span>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
                                     </a>
                                 </div>
