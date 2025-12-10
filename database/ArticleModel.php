@@ -143,9 +143,14 @@ class ArticleModel {
             $where[] = "a.status = ?";
             $params[] = $options['status'];
             
+            // Untuk artikel published, tampilkan jika published_at NULL atau sudah lewat
             if ($options['status'] === 'published') {
                 $where[] = "(a.published_at IS NULL OR a.published_at <= NOW())";
             }
+        } else {
+            // Jika tidak ada filter status, default tampilkan yang published
+            $where[] = "a.status = 'published'";
+            $where[] = "(a.published_at IS NULL OR a.published_at <= NOW())";
         }
         
         if ($options['kategori_id']) {
@@ -208,9 +213,14 @@ class ArticleModel {
             $where[] = "status = ?";
             $params[] = $options['status'];
             
+            // Untuk artikel published, tampilkan jika published_at NULL atau sudah lewat
             if ($options['status'] === 'published') {
                 $where[] = "(published_at IS NULL OR published_at <= NOW())";
             }
+        } else {
+            // Jika tidak ada filter status, default tampilkan yang published
+            $where[] = "status = 'published'";
+            $where[] = "(published_at IS NULL OR published_at <= NOW())";
         }
         
         if ($options['kategori_id']) {
