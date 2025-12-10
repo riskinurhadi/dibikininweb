@@ -332,29 +332,14 @@ function formatDate($date) {
                         </form>
                     </div>
 
-                <!-- Popular Articles -->
-                <?php if (!empty($popularArticles)): ?>
-                <div class="sidebar-card">
-                    <h5><i class="bi bi-fire me-2"></i>Artikel Populer</h5>
-                        <?php foreach ($popularArticles as $pop): ?>
-                                <a href="detail.php?slug=<?php echo htmlspecialchars($pop['slug']); ?>" class="featured-item">
-                            <?php if (!empty($pop['gambar'])): ?>
-                                <img src="<?php echo htmlspecialchars($pop['gambar']); ?>" alt="<?php echo htmlspecialchars($pop['judul']); ?>">
-                            <?php else: ?>
-                                        <div class="no-image-placeholder" style="width: 100px; height: 100px; font-size: 24px;">
-                                    <i class="bi bi-file-text"></i>
-                                </div>
-                            <?php endif; ?>
-                                    <div class="featured-content">
-                                <h6><?php echo htmlspecialchars($pop['judul']); ?></h6>
-                                <div class="meta">
-                                    <i class="bi bi-eye me-1"></i><?php echo number_format($pop['dilihat'] ?? 0); ?> views
-                                </div>
-                            </div>
-                        </a>
-                    <?php endforeach; ?>
+                <!-- Media Promosi -->
+                <div class="promo-card">
+                    <h5>Kembangkan Usaha Anda</h5>
+                    <p>Jangkau ribuan pembaca potensial dan tingkatkan visibilitas brand Anda dengan memasang iklan di blog kami. Dapatkan exposure maksimal untuk produk atau layanan Anda!</p>
+                    <a href="../index.php#Kontak" class="btn-promo">
+                        <i class="bi bi-megaphone me-2"></i>Mulai Iklan
+                    </a>
                 </div>
-                <?php endif; ?>
             </div>
             </div>
         </div>

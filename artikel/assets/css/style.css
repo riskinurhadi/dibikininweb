@@ -432,6 +432,60 @@ body {
 }
 
 /* ============================================
+   MEDIA PROMOSI / IKLAN
+   ============================================ */
+.promo-card {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border: 2px solid var(--white);
+    border-radius: 12px;
+    padding: 30px;
+    color: var(--white);
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.promo-card h5 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--white);
+}
+
+.promo-card p {
+    margin-bottom: 25px;
+    opacity: 0.95;
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+.btn-promo {
+    display: inline-block;
+    padding: 14px 32px;
+    background: var(--white);
+    color: var(--primary-color);
+    border: none;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-promo:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    color: var(--primary-color);
+    background: var(--white);
+}
+
+.btn-promo i {
+    font-size: 1.1rem;
+}
+
+/* ============================================
    EDITOR'S CHOICE
    ============================================ */
 .editor-choice-section {
@@ -611,6 +665,23 @@ body {
     
     .newsletter-section {
         padding: 20px;
+    }
+    
+    .promo-card {
+        padding: 25px 20px;
+    }
+    
+    .promo-card h5 {
+        font-size: 1.3rem;
+    }
+    
+    .promo-card p {
+        font-size: 0.9rem;
+    }
+    
+    .btn-promo {
+        padding: 12px 28px;
+        font-size: 0.95rem;
     }
     
     .breadcrumb-section {
