@@ -261,7 +261,7 @@ function formatDate($date) {
                             <div class="editor-choice-section">
                                 <div class="editor-choice-header">
                                     <i class="bi bi-newspaper"></i>
-                                    <h4>Pilihan Redaktur Headline Media</h4>
+                                    <h4>Pilihan Redaktur Dibikinin.Media</h4>
                                 </div>
                                 <div class="row g-4">
                                     <?php foreach ($editorChoiceArticles as $choice): ?>
