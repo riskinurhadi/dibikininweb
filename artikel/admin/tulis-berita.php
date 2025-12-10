@@ -1,7 +1,11 @@
 <?php
+/**
+ * Halaman Tulis Artikel Baru (Admin)
+ */
+
 session_start();
 
-// 1. Cek Login & Include Database
+// Cek login
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: index.php');
     exit;
@@ -9,7 +13,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
 require_once __DIR__ . '/../../koneksi.php';
 
-$pageTitle = 'Tulis Berita Baru';
+$pageTitle = 'Tulis Artikel Baru';
 $error = '';
 $success = '';
 
@@ -49,12 +53,6 @@ function generateExcerpt($konten, $length = 160) {
     return $excerpt . '...';
 }
 
-function calculateReadingTime($konten) {
-    $wordCount = str_word_count(strip_tags($konten));
-    $readingTime = ceil($wordCount / 200);
-    return max(1, $readingTime);
-}
-
 // Ambil Kategori
 $kategories = [];
 if ($pdo) {
@@ -91,15 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
                 $ringkasan = generateExcerpt($konten);
             }
             
-            // Hitung waktu baca
-            $waktu_baca = calculateReadingTime($konten);
-            
             // Tentukan published_at
             $published_at = ($status === 'published') ? date('Y-m-d H:i:s') : null;
             
             // Insert ke database
-            $sql = "INSERT INTO artikel (judul, slug, konten, ringkasan, gambar, kategori_id, penulis, status, waktu_baca, published_at, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+            $sql = "INSERT INTO artikel (judul, slug, konten, ringkasan, gambar, kategori_id, penulis, status, published_at, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
             
             $stmt = $pdo->prepare($sql);
             $result = $stmt->execute([
@@ -111,14 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
                 $kategori_id,
                 $penulis,
                 $status,
-                $waktu_baca,
                 $published_at
             ]);
             
             if ($result) {
                 $success = ($status === 'published') ? 'Artikel berhasil dipublikasikan!' : 'Draft berhasil disimpan!';
                 if ($status === 'published') {
-                    echo "<script>alert('Berhasil dipublikasikan!'); window.location='semua-berita.php';</script>";
+                    header('Location: semua-berita.php?success=Artikel berhasil dipublikasikan');
                     exit;
                 }
             } else {
@@ -130,52 +124,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle); ?></title>
-
-    <!-- Bootstrap 5 CSS -->
+    <title><?php echo htmlspecialchars($pageTitle); ?> | Admin</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
-    <!-- Summernote CSS (Versi Lite lebih stabil untuk standalone) -->
+    <!-- Summernote CSS -->
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-
+    
     <?php include 'includes/styles.php'; ?>
     
     <style>
-        /* Custom Styles untuk Halaman Tulis Berita */
-        .main-content {
-            background-color: var(--main-bg);
-        }
-        
-        .content-body {
-            padding: 32px;
-        }
-        
-        /* Alert Styling */
-        .alert {
-            border-radius: 8px;
-            border: none;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            margin-bottom: 24px;
-        }
-        
-        .alert-danger {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
-        
-        .alert-success {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-        
-        /* Card Styling */
         .form-card {
             background: white;
             border-radius: 12px;
@@ -202,233 +167,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
             padding: 24px;
         }
         
-        /* Form Controls */
-        .form-label {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .form-control,
-        .form-select {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px 16px;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        
-        .form-control:focus,
-        .form-select:focus {
-            border-color: var(--info-color);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            outline: none;
-        }
-        
-        .form-control-lg {
-            font-size: 16px;
-            padding: 12px 16px;
-        }
-        
-        .form-control::placeholder {
-            color: var(--text-secondary);
-            opacity: 0.6;
-        }
-        
-        /* Button Styling */
-        .btn-action {
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            border: none;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .btn-publish {
-            background: var(--success-color);
-            color: white;
-        }
-        
-        .btn-publish:hover {
-            background: #059669;
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
-        }
-        
-        .btn-draft {
-            background: var(--text-secondary);
-            color: white;
-        }
-        
-        .btn-draft:hover {
-            background: #4a5568;
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(113, 128, 150, 0.3);
-        }
-        
-        /* Divider */
-        .form-divider {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-        
-        /* Help Text */
-        .form-text {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-top: 6px;
-        }
-        
-        /* Character Count */
-        .char-count {
-            text-align: right;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-        
-        /* Summernote Editor Styling - Pastikan tidak terganggu */
         .note-editor {
             border-radius: 8px;
             border: 1px solid var(--border-color) !important;
         }
         
-        .note-editor.note-frame .note-editing-area .note-editable {
-            min-height: 400px;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            padding: 16px;
-        }
-        
-        .note-toolbar {
-            background: #f8f9fa;
-            border-bottom: 1px solid var(--border-color);
-            border-radius: 8px 8px 0 0;
-            padding: 8px;
-        }
-        
-        .note-btn {
-            border-radius: 4px;
-        }
-        
-        .note-btn:hover {
-            background: #e9ecef;
-        }
-        
-        /* Fix untuk dropdown Summernote */
         .note-dropdown-menu {
             z-index: 9999 !important;
-        }
-        
-        /* Responsive */
-        @media (max-width: 992px) {
-            .content-body {
-                padding: 20px;
-            }
-            
-            .form-card-body {
-                padding: 20px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .content-body {
-                padding: 16px;
-            }
-            
-            .form-card-body {
-                padding: 16px;
-            }
         }
     </style>
 </head>
 <body>
-    
     <?php include 'includes/sidebar.php'; ?>
-
+    
     <main class="main-content">
         <?php include 'includes/header.php'; ?>
-
+        
         <div class="content-body">
-            <!-- Alert Section -->
             <?php if ($error): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <strong>Error!</strong> <?= htmlspecialchars($error) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i><?php echo htmlspecialchars($error); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php endif; ?>
             
             <?php if ($success): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    <strong>Berhasil!</strong> <?= htmlspecialchars($success) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle-fill me-2"></i><?php echo htmlspecialchars($success); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php endif; ?>
-
-            <!-- Form -->
+            
             <form method="POST" action="">
                 <div class="row">
-                    <!-- Kolom Kiri: Editor Utama -->
                     <div class="col-lg-8">
                         <div class="form-card">
                             <div class="form-card-header">
-                                <h5 class="form-card-title">
-                                    <i class="bi bi-file-text me-2"></i>Konten Berita
-                                </h5>
+                                <h5 class="form-card-title"><i class="bi bi-file-text me-2"></i>Konten Artikel</h5>
                             </div>
                             <div class="form-card-body">
                                 <div class="mb-4">
-                                    <label for="judul" class="form-label">Judul Artikel <span class="text-danger">*</span></label>
-                                    <input type="text" 
-                                           id="judul"
-                                           name="judul" 
-                                           class="form-control form-control-lg" 
-                                           placeholder="Masukkan judul artikel yang menarik..." 
-                                           value="<?= isset($_POST['judul']) ? htmlspecialchars($_POST['judul']) : '' ?>" 
-                                           required>
-                                    <div class="form-text">Judul yang menarik akan meningkatkan engagement pembaca</div>
+                                    <label for="judul" class="form-label fw-bold">Judul Artikel <span class="text-danger">*</span></label>
+                                    <input type="text" id="judul" name="judul" class="form-control form-control-lg" 
+                                           placeholder="Masukkan judul artikel..." 
+                                           value="<?php echo isset($_POST['judul']) ? htmlspecialchars($_POST['judul']) : ''; ?>" required>
                                 </div>
-
+                                
                                 <div class="mb-4">
-                                    <label for="summernote" class="form-label">Isi Berita <span class="text-danger">*</span></label>
-                                    <textarea id="summernote" name="konten" required><?= isset($_POST['konten']) ? htmlspecialchars($_POST['konten']) : '' ?></textarea>
-                                    <div class="form-text">Gunakan editor untuk memformat konten artikel Anda</div>
+                                    <label for="summernote" class="form-label fw-bold">Isi Artikel <span class="text-danger">*</span></label>
+                                    <textarea id="summernote" name="konten" required><?php echo isset($_POST['konten']) ? htmlspecialchars($_POST['konten']) : ''; ?></textarea>
                                 </div>
-
+                                
                                 <div class="mb-3">
-                                    <label for="ringkasan" class="form-label">Ringkasan</label>
-                                    <textarea id="ringkasan"
-                                              name="ringkasan" 
-                                              class="form-control" 
-                                              rows="3" 
-                                              maxlength="300" 
-                                              placeholder="Ringkasan singkat artikel (opsional, akan di-generate otomatis jika kosong)..."><?= isset($_POST['ringkasan']) ? htmlspecialchars($_POST['ringkasan']) : '' ?></textarea>
-                                    <div class="char-count">
+                                    <label for="ringkasan" class="form-label fw-bold">Ringkasan</label>
+                                    <textarea id="ringkasan" name="ringkasan" class="form-control" rows="3" maxlength="300" 
+                                              placeholder="Ringkasan singkat (opsional)..."><?php echo isset($_POST['ringkasan']) ? htmlspecialchars($_POST['ringkasan']) : ''; ?></textarea>
+                                    <div class="form-text text-end">
                                         <span id="ringkasanCount">0</span>/300 karakter
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Kolom Kanan: Sidebar Pengaturan -->
+                    
                     <div class="col-lg-4">
                         <div class="form-card">
                             <div class="form-card-header">
-                                <h5 class="form-card-title">
-                                    <i class="bi bi-gear me-2"></i>Pengaturan
-                                </h5>
+                                <h5 class="form-card-title"><i class="bi bi-gear me-2"></i>Pengaturan</h5>
                             </div>
                             <div class="form-card-body">
                                 <div class="mb-4">
@@ -436,44 +241,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
                                     <select id="kategori_id" name="kategori_id" class="form-select">
                                         <option value="">-- Pilih Kategori --</option>
                                         <?php foreach ($kategories as $kat): ?>
-                                            <option value="<?= $kat['id'] ?>" <?= (isset($_POST['kategori_id']) && $_POST['kategori_id'] == $kat['id']) ? 'selected' : '' ?>>
-                                                <?= htmlspecialchars($kat['nama']) ?>
+                                            <option value="<?php echo $kat['id']; ?>" 
+                                                    <?php echo (isset($_POST['kategori_id']) && $_POST['kategori_id'] == $kat['id']) ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($kat['nama']); ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
-
+                                
                                 <div class="mb-4">
                                     <label for="penulis" class="form-label">Penulis</label>
-                                    <input type="text" 
-                                           id="penulis"
-                                           name="penulis" 
-                                           class="form-control" 
+                                    <input type="text" id="penulis" name="penulis" class="form-control" 
                                            placeholder="Nama penulis"
-                                           value="<?= isset($_POST['penulis']) ? htmlspecialchars($_POST['penulis']) : 'Admin' ?>">
+                                           value="<?php echo isset($_POST['penulis']) ? htmlspecialchars($_POST['penulis']) : 'Admin'; ?>">
                                 </div>
-
+                                
                                 <div class="mb-4">
-                                    <label for="gambar" class="form-label">URL Gambar Utama</label>
-                                    <input type="url" 
-                                           id="gambar"
-                                           name="gambar" 
-                                           class="form-control" 
+                                    <label for="gambar" class="form-label">URL Gambar</label>
+                                    <input type="url" id="gambar" name="gambar" class="form-control" 
                                            placeholder="https://example.com/gambar.jpg"
-                                           value="<?= isset($_POST['gambar']) ? htmlspecialchars($_POST['gambar']) : '' ?>">
-                                    <div class="form-text">Masukkan URL gambar untuk artikel</div>
+                                           value="<?php echo isset($_POST['gambar']) ? htmlspecialchars($_POST['gambar']) : ''; ?>">
                                 </div>
-
-                                <hr class="form-divider">
-
+                                
+                                <hr>
+                                
                                 <div class="d-grid gap-2">
-                                    <button type="submit" name="action" value="publish" class="btn btn-action btn-publish">
-                                        <i class="bi bi-send"></i>
-                                        <span>Publikasikan</span>
+                                    <button type="submit" name="action" value="publish" class="btn btn-success fw-bold">
+                                        <i class="bi bi-send me-2"></i>Publikasikan
                                     </button>
-                                    <button type="submit" name="action" value="draft" class="btn btn-action btn-draft">
-                                        <i class="bi bi-save"></i>
-                                        <span>Simpan Draft</span>
+                                    <button type="submit" name="action" value="draft" class="btn btn-secondary">
+                                        <i class="bi bi-save me-2"></i>Simpan Draft
                                     </button>
                                 </div>
                             </div>
@@ -483,23 +280,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
             </form>
         </div>
     </main>
-
-    <!-- Script Wajib: jQuery -> Bootstrap -> Summernote -->
+    
+    <!-- jQuery & Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Summernote Lite JS (Versi Lite lebih ringan dan jarang konflik dengan Bootstrap 5) -->
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-
+    
     <script>
         $(document).ready(function() {
-            // Inisialisasi Summernote Sederhana
+            // Inisialisasi Summernote
             $('#summernote').summernote({
-                placeholder: 'Tulis konten berita di sini...',
-                tabsize: 2,
-                height: 400, // Tinggi editor
+                height: 400,
+                placeholder: 'Tulis konten artikel di sini...',
                 toolbar: [
                     ['style', ['style']],
-                    ['font', ['bold', 'underline', 'clear']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
                     ['color', ['color']],
                     ['para', ['ul', 'ol', 'paragraph']],
                     ['table', ['table']],
@@ -513,12 +310,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
             const ringkasanCount = document.getElementById('ringkasanCount');
             
             if (ringkasanInput && ringkasanCount) {
-                // Update count on input
                 ringkasanInput.addEventListener('input', function() {
                     ringkasanCount.textContent = this.value.length;
                 });
-                
-                // Update count on load
                 ringkasanCount.textContent = ringkasanInput.value.length;
             }
         });
