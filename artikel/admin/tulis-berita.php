@@ -115,9 +115,8 @@ if ($pdo) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Summernote Editor -->
+    <!-- Summernote Editor CSS -->
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.js"></script>
     
     <!-- Include Styles -->
     <?php include 'includes/styles.php'; ?>
@@ -412,35 +411,62 @@ if ($pdo) {
     
     <!-- jQuery (required for Summernote) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Fallback jika jQuery gagal dimuat
+        if (typeof jQuery === 'undefined') {
+            document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"><\/script>');
+        }
+    </script>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Summernote Editor JS (harus setelah jQuery dan Bootstrap) -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.js"></script>
+    
     <script>
-        // Summernote Editor
-        $(document).ready(function() {
-            $('#konten').summernote({
-                height: 500,
-                placeholder: 'Tulis konten artikel Anda di sini...',
-                toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'italic', 'underline', 'clear']],
-                    ['fontname', ['fontname']],
-                    ['fontsize', ['fontsize']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['table', ['table']],
-                    ['insert', ['link', 'picture', 'video']],
-                    ['view', ['fullscreen', 'codeview', 'help']]
-                ],
-                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Inter', 'Times New Roman', 'Verdana'],
-                fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '36', '48'],
-                callbacks: {
-                    onInit: function() {
-                        $('.note-editor').css('border-radius', '8px');
-                    }
+        // Summernote Editor - Pastikan jQuery dan Summernote sudah dimuat
+        // Gunakan window.onload untuk memastikan semua sudah dimuat
+        window.addEventListener('load', function() {
+            // Tunggu sebentar untuk memastikan semua script sudah dimuat
+            setTimeout(function() {
+                // Cek apakah jQuery tersedia
+                if (typeof jQuery === 'undefined') {
+                    console.error('jQuery tidak ditemukan!');
+                    return;
                 }
-            });
+                
+                // Cek apakah Summernote sudah tersedia
+                if (typeof jQuery.fn.summernote !== 'undefined') {
+                    jQuery('#konten').summernote({
+                        height: 500,
+                        placeholder: 'Tulis konten artikel Anda di sini...',
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'italic', 'underline', 'clear']],
+                            ['fontname', ['fontname']],
+                            ['fontsize', ['fontsize']],
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture', 'video']],
+                            ['view', ['fullscreen', 'codeview', 'help']]
+                        ],
+                        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Inter', 'Times New Roman', 'Verdana'],
+                        fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '36', '48'],
+                        callbacks: {
+                            onInit: function() {
+                                jQuery('.note-editor').css('border-radius', '8px');
+                            }
+                        }
+                    });
+                    console.log('Summernote editor berhasil diinisialisasi');
+                } else {
+                    console.error('Summernote tidak tersedia. Pastikan script sudah dimuat dengan benar.');
+                    console.log('jQuery version:', typeof jQuery !== 'undefined' ? jQuery.fn.jquery : 'not found');
+                    console.log('Summernote available:', typeof jQuery.fn.summernote);
+                }
+            }, 200);
         });
         
         // Character count untuk ringkasan
