@@ -298,26 +298,26 @@ function formatDate($date) {
                 <!-- Sidebar -->
                 <div class="col-lg-4">
                     <!-- Featured Story -->
-                    <?php if (!empty($featuredArticles)): ?>
+                    <?php if (!empty($popularArticles)): ?>
                 <div class="sidebar-card">
-                            <h5>Featured story</h5>
-                            <?php foreach ($featuredArticles as $featured): ?>
-                                <a href="detail.php?slug=<?php echo htmlspecialchars($featured['slug']); ?>" class="featured-item">
-                                    <?php if (!empty($featured['gambar'])): ?>
-                                        <img src="<?php echo htmlspecialchars($featured['gambar']); ?>" alt="<?php echo htmlspecialchars($featured['judul']); ?>">
-                                    <?php else: ?>
+                    <h5><i class="bi bi-fire me-2"></i>Artikel Populer</h5>
+                        <?php foreach ($popularArticles as $pop): ?>
+                                <a href="detail.php?slug=<?php echo htmlspecialchars($pop['slug']); ?>" class="featured-item">
+                            <?php if (!empty($pop['gambar'])): ?>
+                                <img src="<?php echo htmlspecialchars($pop['gambar']); ?>" alt="<?php echo htmlspecialchars($pop['judul']); ?>">
+                            <?php else: ?>
                                         <div class="no-image-placeholder" style="width: 100px; height: 100px; font-size: 24px;">
-                                            <i class="bi bi-file-text"></i>
-                                        </div>
-                                    <?php endif; ?>
+                                    <i class="bi bi-file-text"></i>
+                                </div>
+                            <?php endif; ?>
                                     <div class="featured-content">
-                                        <h6><?php echo htmlspecialchars($featured['judul']); ?></h6>
-                                        <div class="meta">
-                                            <span><?php echo date('d M Y', strtotime($featured['published_at'])); ?></span>
-                                        </div>
-                                    </div>
-                                </a>
-                        <?php endforeach; ?>
+                                <h6><?php echo htmlspecialchars($pop['judul']); ?></h6>
+                                <div class="meta">
+                                    <i class="bi bi-eye me-1"></i><?php echo number_format($pop['dilihat'] ?? 0); ?> views
+                                </div>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
                     
