@@ -31,24 +31,114 @@ body {
 }
 
 /* ============================================
-   HEADER & NAVIGATION
+   NAVBAR
    ============================================ */
-.article-header {
+.article-navbar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.article-navbar .navbar-brand {
+    color: var(--white) !important;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.article-navbar .navbar-brand i {
+    font-size: 1.8rem;
+}
+
+.article-navbar .navbar-nav .nav-link {
+    color: rgba(255,255,255,0.9) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s;
+    border-radius: 6px;
+    margin: 0 0.25rem;
+}
+
+.article-navbar .navbar-nav .nav-link:hover,
+.article-navbar .navbar-nav .nav-link.active {
+    color: var(--white) !important;
+    background: rgba(255,255,255,0.15);
+}
+
+.article-navbar .navbar-toggler {
+    border: 2px solid rgba(255,255,255,0.3);
+    padding: 0.4rem 0.6rem;
+}
+
+.article-navbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.article-navbar .btn-outline-light {
+    border-color: rgba(255,255,255,0.5);
+    color: var(--white);
+}
+
+.article-navbar .btn-outline-light:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.8);
+    color: var(--white);
+}
+
+/* ============================================
+   PAGE HEADER BANNER
+   ============================================ */
+.page-header-banner {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
     color: var(--white);
-    padding: 80px 0 60px;
+    padding: 60px 0 40px;
     margin-bottom: 40px;
 }
 
-.article-header h1 {
+.page-header-banner h1 {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
 }
 
-.article-header p {
+.page-header-banner p {
     font-size: 1.1rem;
     opacity: 0.9;
+    margin: 0;
+}
+
+/* ============================================
+   BREADCRUMB SECTION
+   ============================================ */
+.breadcrumb-section {
+    background: var(--light-bg);
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.breadcrumb-section .breadcrumb {
+    margin: 0;
+    background: transparent;
+    padding: 0;
+}
+
+.breadcrumb-section .breadcrumb-item a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.breadcrumb-section .breadcrumb-item a:hover {
+    color: var(--primary-color);
+}
+
+.breadcrumb-section .breadcrumb-item.active {
+    color: var(--text-primary);
 }
 
 /* ============================================
@@ -409,6 +499,25 @@ body {
     .main-article-overlay h2 {
         font-size: 24px;
     }
+    
+    .article-navbar .navbar-nav {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .article-navbar .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        margin: 0.25rem 0;
+    }
+    
+    .page-header-banner {
+        padding: 40px 0 30px;
+    }
+    
+    .page-header-banner h1 {
+        font-size: 2rem;
+    }
 }
 
 @media (max-width: 768px) {
@@ -424,12 +533,147 @@ body {
         font-size: 20px;
     }
     
-    .article-header {
-        padding: 60px 0 40px;
+    .page-header-banner {
+        padding: 30px 0 20px;
     }
     
-    .article-header h1 {
-        font-size: 2rem;
+    .page-header-banner h1 {
+        font-size: 1.75rem;
+    }
+    
+    .page-header-banner p {
+        font-size: 0.95rem;
+    }
+    
+    .article-navbar .navbar-brand {
+        font-size: 1.25rem;
+    }
+    
+    .article-navbar .navbar-brand i {
+        font-size: 1.5rem;
+    }
+    
+    .article-card {
+        margin-bottom: 20px;
+    }
+    
+    .trending-item,
+    .featured-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .trending-item img,
+    .featured-item img {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-article-banner {
+        height: 250px;
+    }
+    
+    .main-article-overlay {
+        padding: 15px;
+    }
+    
+    .main-article-overlay h2 {
+        font-size: 18px;
+    }
+    
+    .page-header-banner h1 {
+        font-size: 1.5rem;
+    }
+    
+    .page-header-banner p {
+        font-size: 0.9rem;
+    }
+    
+    .article-card-title {
+        font-size: 16px;
+    }
+    
+    .article-card-body {
+        padding: 15px;
+    }
+    
+    .sidebar-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .newsletter-section {
+        padding: 20px;
+    }
+    
+    .breadcrumb-section {
+        padding: 10px 0;
+    }
+    
+    .breadcrumb-section .breadcrumb {
+        font-size: 0.85rem;
+    }
+}
+
+/* ============================================
+   ADDITIONAL RESPONSIVE IMPROVEMENTS
+   ============================================ */
+@media (max-width: 992px) {
+    .row.g-4 {
+        --bs-gutter-y: 1.5rem;
+    }
+    
+    .sidebar-card {
+        margin-bottom: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .main-article-overlay .article-meta {
+        font-size: 11px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .trending-section h5,
+    .editor-choice-header h4 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .article-card img {
+        height: 180px;
+    }
+    
+    .no-image-placeholder {
+        height: 180px !important;
+    }
+    
+    .main-article-overlay .article-meta {
+        font-size: 10px;
+    }
+    
+    .trending-item,
+    .featured-item {
+        padding: 12px 0;
+    }
+    
+    .trending-item h6,
+    .featured-item h6 {
+        font-size: 0.95rem;
     }
 }
 

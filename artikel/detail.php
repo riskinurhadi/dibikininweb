@@ -15,10 +15,14 @@ if (empty($slug)) {
 
 $article = null;
 $relatedArticles = [];
+$categories = [];
 
 // Query artikel jika database tersedia
 if ($pdo) {
     try {
+        // Ambil kategori untuk navbar
+        $stmt = $pdo->query("SELECT * FROM kategori_artikel ORDER BY nama");
+        $categories = $stmt->fetchAll();
         // Ambil artikel berdasarkan slug - Sederhanakan query
         $sql = "SELECT a.*, k.nama AS kategori_nama 
                 FROM artikel a 
@@ -200,14 +204,52 @@ if ($pdo) {
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="article-header">
+    <!-- Navbar -->
+    <nav class="article-navbar navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.php">
+                <i class="bi bi-newspaper me-2"></i>
+                <span>Artikel & Berita</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">
+                            <i class="bi bi-house me-1"></i>Semua Artikel
+                        </a>
+                    </li>
+                    <?php if (!empty($categories)): ?>
+                        <?php foreach ($categories as $category): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php?kategori=<?php echo urlencode($category['nama']); ?>">
+                                    <?php echo htmlspecialchars($category['nama']); ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </ul>
+                <div class="d-flex">
+                    <a href="../index.php" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Kembali ke Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-section">
         <div class="container">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-3">
-                    <li class="breadcrumb-item"><a href="../index.php" style="color: rgba(255,255,255,0.8); text-decoration: none;">Home</a></li>
-                    <li class="breadcrumb-item"><a href="index.php" style="color: rgba(255,255,255,0.8); text-decoration: none;">Artikel</a></li>
-                    <li class="breadcrumb-item active" style="color: white;"><?php echo htmlspecialchars($article['judul']); ?></li>
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
+                    <li class="breadcrumb-item"><a href="index.php">Artikel</a></li>
+                    <li class="breadcrumb-item active"><?php echo htmlspecialchars($article['judul']); ?></li>
                 </ol>
             </nav>
         </div>

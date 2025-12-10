@@ -15,12 +15,20 @@ $editorChoiceArticles = [];
 $popularArticles = [];
 $categories = [];
 
+// Ambil parameter kategori dari URL
+$filterKategori = isset($_GET['kategori']) ? trim($_GET['kategori']) : '';
+
 // Query artikel jika database tersedia
 if ($pdo) {
     try {
         // Query dasar untuk artikel published - Sederhanakan query
         // Hanya cek status = 'published', tanpa kondisi published_at yang kompleks
         $baseWhere = "WHERE a.status = 'published'";
+        
+        // Filter berdasarkan kategori jika ada
+        if (!empty($filterKategori)) {
+            $baseWhere .= " AND k.nama = " . $pdo->quote($filterKategori);
+        }
         
         // Ambil artikel utama (terbaru)
         $sql = "SELECT a.*, k.nama AS kategori_nama 
@@ -121,33 +129,56 @@ function formatDate($date) {
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <!-- Header -->
-    <div class="article-header">
+    <!-- Navbar -->
+    <nav class="article-navbar navbar navbar-expand-lg">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-3">
-                            <li class="breadcrumb-item"><a href="../index.php" style="color: rgba(255,255,255,0.8); text-decoration: none;">Home</a></li>
-                            <li class="breadcrumb-item active" style="color: white;">Artikel</li>
-                        </ol>
-                    </nav>
-                    <h1>Artikel & Berita</h1>
-                    <p>Baca artikel terbaru seputar web development, teknologi, dan tips digital marketing</p>
-                </div>
-                <div class="col-lg-4 text-end">
-                    <a href="../index.php" class="btn btn-light">
-                        <i class="bi bi-arrow-left me-2"></i>Kembali ke Home
+            <a class="navbar-brand" href="index.php">
+                <i class="bi bi-newspaper me-2"></i>
+                <span>Artikel & Berita</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">
+                            <i class="bi bi-house me-1"></i>Semua Artikel
+                        </a>
+                    </li>
+                    <?php if (!empty($categories)): ?>
+                        <?php foreach ($categories as $category): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php?kategori=<?php echo urlencode($category['nama']); ?>">
+                                    <?php echo htmlspecialchars($category['nama']); ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </ul>
+                <div class="d-flex">
+                    <a href="../index.php" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Kembali ke Home
                     </a>
                 </div>
             </div>
+        </div>
+    </nav>
+    
+    <!-- Page Header -->
+    <div class="page-header-banner">
+        <div class="container">
+            <h1>Artikel & Berita</h1>
+            <p>Baca artikel terbaru seputar web development, teknologi, dan tips digital marketing</p>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="container-fluid py-5" style="background: #f8f9fa;">
         <div class="container">
-            <div class="row">
+        <div class="row">
                 <!-- Main Content Area -->
                 <div class="col-lg-8">
                     <?php if ($mainArticle): ?>
@@ -177,7 +208,7 @@ function formatDate($date) {
                         <?php if (!empty($nextArticles)): ?>
                             <div class="row g-4 mb-4">
                                 <?php foreach ($nextArticles as $next): ?>
-                                    <div class="col-md-6">
+                                    <div class="col-lg-6 col-md-6 col-12">
                                         <a href="detail.php?slug=<?php echo htmlspecialchars($next['slug']); ?>" class="article-card">
                                             <?php if (!empty($next['gambar'])): ?>
                                                 <img src="<?php echo htmlspecialchars($next['gambar']); ?>" alt="<?php echo htmlspecialchars($next['judul']); ?>">
@@ -234,7 +265,7 @@ function formatDate($date) {
                                 </div>
                                 <div class="row g-4">
                                     <?php foreach ($editorChoiceArticles as $choice): ?>
-                                        <div class="col-md-4">
+                                        <div class="col-lg-4 col-md-6 col-12">
                                             <a href="detail.php?slug=<?php echo htmlspecialchars($choice['slug']); ?>" class="article-card">
                                                 <?php if (!empty($choice['gambar'])): ?>
                                                     <img src="<?php echo htmlspecialchars($choice['gambar']); ?>" alt="<?php echo htmlspecialchars($choice['judul']); ?>">
@@ -263,12 +294,12 @@ function formatDate($date) {
                         </div>
                     <?php endif; ?>
                 </div>
-                
+
                 <!-- Sidebar -->
                 <div class="col-lg-4">
                     <!-- Featured Story -->
                     <?php if (!empty($featuredArticles)): ?>
-                        <div class="sidebar-card">
+                <div class="sidebar-card">
                             <h5>Featured story</h5>
                             <?php foreach ($featuredArticles as $featured): ?>
                                 <a href="detail.php?slug=<?php echo htmlspecialchars($featured['slug']); ?>" class="featured-item">
@@ -286,9 +317,9 @@ function formatDate($date) {
                                         </div>
                                     </div>
                                 </a>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
+                        <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
                     
                     <!-- Newsletter Subscription -->
                     <div class="newsletter-section">
@@ -300,31 +331,31 @@ function formatDate($date) {
                             <button type="submit">SUBSCRIBE</button>
                         </form>
                     </div>
-                    
-                    <!-- Popular Articles -->
-                    <?php if (!empty($popularArticles)): ?>
-                        <div class="sidebar-card">
-                            <h5><i class="bi bi-fire me-2"></i>Artikel Populer</h5>
-                            <?php foreach ($popularArticles as $pop): ?>
+
+                <!-- Popular Articles -->
+                <?php if (!empty($popularArticles)): ?>
+                <div class="sidebar-card">
+                    <h5><i class="bi bi-fire me-2"></i>Artikel Populer</h5>
+                        <?php foreach ($popularArticles as $pop): ?>
                                 <a href="detail.php?slug=<?php echo htmlspecialchars($pop['slug']); ?>" class="featured-item">
-                                    <?php if (!empty($pop['gambar'])): ?>
-                                        <img src="<?php echo htmlspecialchars($pop['gambar']); ?>" alt="<?php echo htmlspecialchars($pop['judul']); ?>">
-                                    <?php else: ?>
+                            <?php if (!empty($pop['gambar'])): ?>
+                                <img src="<?php echo htmlspecialchars($pop['gambar']); ?>" alt="<?php echo htmlspecialchars($pop['judul']); ?>">
+                            <?php else: ?>
                                         <div class="no-image-placeholder" style="width: 100px; height: 100px; font-size: 24px;">
-                                            <i class="bi bi-file-text"></i>
-                                        </div>
-                                    <?php endif; ?>
+                                    <i class="bi bi-file-text"></i>
+                                </div>
+                            <?php endif; ?>
                                     <div class="featured-content">
-                                        <h6><?php echo htmlspecialchars($pop['judul']); ?></h6>
-                                        <div class="meta">
-                                            <i class="bi bi-eye me-1"></i><?php echo number_format($pop['dilihat'] ?? 0); ?> views
-                                        </div>
-                                    </div>
-                                </a>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
+                                <h6><?php echo htmlspecialchars($pop['judul']); ?></h6>
+                                <div class="meta">
+                                    <i class="bi bi-eye me-1"></i><?php echo number_format($pop['dilihat'] ?? 0); ?> views
+                                </div>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
+            </div>
             </div>
         </div>
     </div>
@@ -333,10 +364,10 @@ function formatDate($date) {
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 col-12 mb-2 mb-md-0">
                     <p class="mb-0">&copy; <?php echo date('Y'); ?> dibikininweb. All Rights Reserved.</p>
                 </div>
-                <div class="col-md-6 text-end">
+                <div class="col-md-6 col-12 text-md-end text-start">
                     <a href="../index.php" class="text-white text-decoration-none">Kembali ke Home</a>
                 </div>
             </div>
