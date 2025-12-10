@@ -233,6 +233,11 @@ if ($pdo) {
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </ul>
+                <div class="d-flex">
+                    <a href="index.php" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Kembali ke Daftar Artikel
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -332,12 +337,7 @@ if ($pdo) {
             
             <!-- Sidebar -->
             <div class="col-lg-4">
-                <!-- Back Button -->
-                <div class="sidebar-card mb-4">
-                    <a href="index.php" class="btn-back-article w-100">
-                        <i class="bi bi-arrow-left me-2"></i>Kembali ke Daftar Artikel
-                    </a>
-                </div>
+                <!-- Sidebar content bisa ditambahkan di sini -->
             </div>
         </div>
     </div>
