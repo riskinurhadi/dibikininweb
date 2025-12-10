@@ -14,7 +14,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
 require_once __DIR__ . '/../../koneksi.php';
 
-// Inisialisasi stats
+// Inisialisasi stats dengan nilai default
 $stats = [
     'total_artikel' => 0,
     'artikel_published' => 0,
@@ -30,24 +30,29 @@ $popularArticles = [];
 if ($pdo) {
     try {
         // Total artikel
-        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel");
-        $stats['total_artikel'] = (int)$stmt->fetchColumn();
+        $stmt = $pdo->query("SELECT COUNT(*) FROM artikel");
+        $result = $stmt->fetchColumn();
+        $stats['total_artikel'] = (int)(($result !== false && $result !== null) ? $result : 0);
         
         // Artikel published
-        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'published'");
-        $stats['artikel_published'] = (int)$stmt->fetchColumn();
+        $stmt = $pdo->query("SELECT COUNT(*) FROM artikel WHERE status = 'published'");
+        $result = $stmt->fetchColumn();
+        $stats['artikel_published'] = (int)(($result !== false && $result !== null) ? $result : 0);
         
         // Artikel draft
-        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'draft'");
-        $stats['artikel_draft'] = (int)$stmt->fetchColumn();
+        $stmt = $pdo->query("SELECT COUNT(*) FROM artikel WHERE status = 'draft'");
+        $result = $stmt->fetchColumn();
+        $stats['artikel_draft'] = (int)(($result !== false && $result !== null) ? $result : 0);
         
         // Total views
-        $stmt = $pdo->query("SELECT COALESCE(SUM(dilihat), 0) as total FROM artikel");
-        $stats['total_views'] = (int)$stmt->fetchColumn();
+        $stmt = $pdo->query("SELECT COALESCE(SUM(dilihat), 0) FROM artikel");
+        $result = $stmt->fetchColumn();
+        $stats['total_views'] = (int)(($result !== false && $result !== null) ? $result : 0);
         
         // Artikel minggu ini
-        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'published' AND YEARWEEK(published_at) = YEARWEEK(CURDATE())");
-        $stats['artikel_minggu_ini'] = (int)$stmt->fetchColumn();
+        $stmt = $pdo->query("SELECT COUNT(*) FROM artikel WHERE status = 'published' AND YEARWEEK(published_at) = YEARWEEK(CURDATE())");
+        $result = $stmt->fetchColumn();
+        $stats['artikel_minggu_ini'] = (int)(($result !== false && $result !== null) ? $result : 0);
         
         // Artikel terbaru
         $stmt = $pdo->query("SELECT a.*, k.nama AS kategori_nama 
@@ -55,7 +60,7 @@ if ($pdo) {
                             LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
                             ORDER BY a.created_at DESC 
                             LIMIT 5");
-        $recentArticles = $stmt->fetchAll();
+        $recentArticles = $stmt->fetchAll() ?: [];
         
         // Artikel populer
         $stmt = $pdo->query("SELECT a.*, k.nama AS kategori_nama 
@@ -64,22 +69,50 @@ if ($pdo) {
                             WHERE a.status = 'published'
                             ORDER BY a.dilihat DESC 
                             LIMIT 5");
-        $popularArticles = $stmt->fetchAll();
+        $popularArticles = $stmt->fetchAll() ?: [];
         
     } catch (Exception $e) {
-        // Error handling
+        // Pastikan semua key tetap terdefinisi jika error
+        $stats['total_artikel'] = 0;
+        $stats['artikel_published'] = 0;
+        $stats['artikel_draft'] = 0;
+        $stats['total_views'] = 0;
+        $stats['artikel_minggu_ini'] = 0;
+        $recentArticles = [];
+        $popularArticles = [];
     }
+} else {
+    // Jika $pdo tidak tersedia, pastikan semua key terdefinisi
+    $stats['total_artikel'] = 0;
+    $stats['artikel_published'] = 0;
+    $stats['artikel_draft'] = 0;
+    $stats['total_views'] = 0;
+    $stats['artikel_minggu_ini'] = 0;
+    $recentArticles = [];
+    $popularArticles = [];
 }
+
+// Pastikan semua key selalu terdefinisi (double check)
+$stats['total_artikel'] = isset($stats['total_artikel']) ? (int)$stats['total_artikel'] : 0;
+$stats['artikel_published'] = isset($stats['artikel_published']) ? (int)$stats['artikel_published'] : 0;
+$stats['artikel_draft'] = isset($stats['artikel_draft']) ? (int)$stats['artikel_draft'] : 0;
+$stats['total_views'] = isset($stats['total_views']) ? (int)$stats['total_views'] : 0;
+$stats['artikel_minggu_ini'] = isset($stats['artikel_minggu_ini']) ? (int)$stats['artikel_minggu_ini'] : 0;
+$recentArticles = isset($recentArticles) && is_array($recentArticles) ? $recentArticles : [];
+$popularArticles = isset($popularArticles) && is_array($popularArticles) ? $popularArticles : [];
 
 // Format angka
 function formatNumber($number) {
-    $number = (int)($number ?? 0);
+    // Pastikan selalu integer dan tidak null
+    $number = isset($number) ? (int)$number : 0;
+    $number = max(0, $number); // Pastikan tidak negatif
+    
     if ($number >= 1000000) {
-        return number_format($number / 1000000, 1) . 'M';
+        return number_format($number / 1000000, 1, '.', ',') . 'M';
     } elseif ($number >= 1000) {
-        return number_format($number / 1000, 1) . 'K';
+        return number_format($number / 1000, 1, '.', ',') . 'K';
     }
-    return number_format($number, 0, '.', '');
+    return number_format($number, 0, '.', ',');
 }
 
 $pageTitle = 'Dashboard';
@@ -216,7 +249,7 @@ $pageTitle = 'Dashboard';
                         <div class="stat-card-icon">
                             <i class="bi bi-file-text"></i>
                         </div>
-                        <div class="stat-card-value"><?php echo number_format($stats['total_artikel']); ?></div>
+                        <div class="stat-card-value"><?php echo number_format($stats['total_artikel'] ?? 0); ?></div>
                         <div class="stat-card-label">Total Artikel</div>
                     </div>
                 </div>
@@ -226,7 +259,7 @@ $pageTitle = 'Dashboard';
                         <div class="stat-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success-color);">
                             <i class="bi bi-check-circle"></i>
                         </div>
-                        <div class="stat-card-value"><?php echo number_format($stats['artikel_published']); ?></div>
+                        <div class="stat-card-value"><?php echo number_format($stats['artikel_published'] ?? 0); ?></div>
                         <div class="stat-card-label">Artikel Published</div>
                     </div>
                 </div>
@@ -236,7 +269,7 @@ $pageTitle = 'Dashboard';
                         <div class="stat-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color);">
                             <i class="bi bi-pencil"></i>
                         </div>
-                        <div class="stat-card-value"><?php echo number_format($stats['artikel_draft']); ?></div>
+                        <div class="stat-card-value"><?php echo number_format($stats['artikel_draft'] ?? 0); ?></div>
                         <div class="stat-card-label">Draft Artikel</div>
                     </div>
                 </div>
@@ -246,7 +279,7 @@ $pageTitle = 'Dashboard';
                         <div class="stat-card-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--info-color);">
                             <i class="bi bi-eye"></i>
                         </div>
-                        <div class="stat-card-value"><?php echo formatNumber($stats['total_views']); ?></div>
+                        <div class="stat-card-value"><?php echo formatNumber($stats['total_views'] ?? 0); ?></div>
                         <div class="stat-card-label">Total Views</div>
                     </div>
                 </div>
