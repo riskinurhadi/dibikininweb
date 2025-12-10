@@ -5,14 +5,11 @@
 
 session_start();
 require_once __DIR__ . '/../koneksi.php';
-require_once __DIR__ . '/../database/ArticleModel.php';
 
 // Cek koneksi database
 if (!$pdo) {
-    die("Database belum dikonfigurasi. Silakan buat database terlebih dahulu dengan menjalankan file database_artikel.sql");
+    die("Database belum dikonfigurasi.");
 }
-
-$articleModel = new ArticleModel($pdo);
 
 // Ambil slug dari URL
 $slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
@@ -24,15 +21,37 @@ if (empty($slug)) {
 
 // Ambil artikel berdasarkan slug
 try {
-    $article = $articleModel->getBySlug($slug);
+    $sql = "SELECT a.*, k.nama AS kategori_nama 
+            FROM artikel a 
+            LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+            WHERE a.slug = ? AND a.status = 'published' 
+            AND (a.published_at IS NULL OR a.published_at <= NOW())";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$slug]);
+    $article = $stmt->fetch();
     
     if (!$article) {
         header('Location: index.php');
         exit;
     }
     
-    // Ambil artikel terkait
-    $relatedArticles = $articleModel->getRelatedArticles($article['id'], 3);
+    // Increment view count
+    $updateStmt = $pdo->prepare("UPDATE artikel SET dilihat = dilihat + 1 WHERE id = ?");
+    $updateStmt->execute([$article['id']]);
+    
+    // Ambil artikel terkait (berdasarkan kategori yang sama)
+    $relatedSql = "SELECT a.*, k.nama AS kategori_nama 
+                   FROM artikel a 
+                   LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+                   WHERE a.kategori_id = ? 
+                   AND a.id != ? 
+                   AND a.status = 'published' 
+                   AND (a.published_at IS NULL OR a.published_at <= NOW())
+                   ORDER BY a.published_at DESC 
+                   LIMIT 3";
+    $relatedStmt = $pdo->prepare($relatedSql);
+    $relatedStmt->execute([$article['kategori_id'], $article['id']]);
+    $relatedArticles = $relatedStmt->fetchAll();
 } catch (Exception $e) {
     die("Error: " . $e->getMessage());
 }

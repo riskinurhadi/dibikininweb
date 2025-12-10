@@ -6,7 +6,6 @@
 
 session_start();
 require_once __DIR__ . '/../koneksi.php';
-require_once __DIR__ . '/../database/ArticleModel.php';
 
 // Inisialisasi variabel
 $articles = [];
@@ -16,6 +15,7 @@ $featuredArticles = [];
 $trendingArticles = [];
 $editorChoiceArticles = [];
 $mainArticle = null;
+$nextArticles = [];
 $totalArticles = 0;
 $totalPages = 1;
 $dbError = false;
@@ -23,86 +23,126 @@ $dbError = false;
 // Cek koneksi database
 if (!$pdo) {
     $dbError = true;
-    $errorMessage = "Database belum dikonfigurasi atau belum dibuat. Silakan buat database terlebih dahulu dengan menjalankan file database_artikel.sql";
+    $errorMessage = "Database belum dikonfigurasi atau belum dibuat.";
 } else {
     try {
-        // Inisialisasi ArticleModel
-        $articleModel = new ArticleModel($pdo);
-
         // Pagination
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $limit = 9; // 9 artikel per halaman
+        $limit = 9;
         $kategori_id = isset($_GET['category']) ? (int)$_GET['category'] : null;
         $search = isset($_GET['search']) ? trim($_GET['search']) : null;
-
-        // Ambil artikel utama (terbaru) untuk banner besar
-        $mainArticles = $articleModel->getList([
-            'status' => 'published',
-            'page' => 1,
-            'limit' => 1,
-            'order_by' => 'published_at',
-            'order_dir' => 'DESC'
-        ]);
-        $mainArticle = !empty($mainArticles) ? $mainArticles[0] : null;
-
-        // Ambil 2 artikel berikutnya untuk di bawah banner utama
-        $nextArticles = $articleModel->getList([
-            'status' => 'published',
-            'page' => 1,
-            'limit' => 3,
-            'order_by' => 'published_at',
-            'order_dir' => 'DESC'
-        ]);
-        $nextArticles = array_slice($nextArticles, 1, 2); // Skip yang pertama (sudah jadi main)
-
-        // Ambil artikel untuk Featured Story (sidebar kanan)
-        $featuredArticles = $articleModel->getList([
-            'status' => 'published',
-            'page' => 1,
-            'limit' => 4,
-            'order_by' => 'published_at',
-            'order_dir' => 'DESC'
-        ]);
-
-        // Ambil artikel untuk Trending Now (berdasarkan dilihat)
-        $trendingArticles = $articleModel->getPopularArticles(4);
-
-        // Ambil artikel untuk Editor's Choice (artikel terbaru)
-        $editorChoiceArticles = $articleModel->getList([
-            'status' => 'published',
-            'page' => 1,
-            'limit' => 6,
-            'order_by' => 'published_at',
-            'order_dir' => 'DESC'
-        ]);
-
-        // Ambil artikel untuk list utama (jika ada filter/search)
+        
+        // Query dasar untuk artikel published
+        $baseWhere = "WHERE a.status = 'published' AND (a.published_at IS NULL OR a.published_at <= NOW())";
+        $params = [];
+        
+        // Filter kategori
+        if ($kategori_id) {
+            $baseWhere .= " AND a.kategori_id = ?";
+            $params[] = $kategori_id;
+        }
+        
+        // Filter search
+        if ($search) {
+            $baseWhere .= " AND (a.judul LIKE ? OR a.konten LIKE ? OR a.ringkasan LIKE ?)";
+            $searchTerm = '%' . $search . '%';
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+        }
+        
+        // Ambil artikel utama (terbaru)
+        $sql = "SELECT a.*, k.nama AS kategori_nama 
+                FROM artikel a 
+                LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+                $baseWhere 
+                ORDER BY a.published_at DESC, a.created_at DESC 
+                LIMIT 1";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $mainArticle = $stmt->fetch();
+        
+        // Ambil 2 artikel berikutnya
+        $sql = "SELECT a.*, k.nama AS kategori_nama 
+                FROM artikel a 
+                LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+                $baseWhere 
+                ORDER BY a.published_at DESC, a.created_at DESC 
+                LIMIT 3 OFFSET 1";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $nextArticles = $stmt->fetchAll();
+        $nextArticles = array_slice($nextArticles, 0, 2);
+        
+        // Ambil Featured Articles (4 artikel terbaru)
+        $sql = "SELECT a.*, k.nama AS kategori_nama 
+                FROM artikel a 
+                LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+                $baseWhere 
+                ORDER BY a.published_at DESC, a.created_at DESC 
+                LIMIT 4";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $featuredArticles = $stmt->fetchAll();
+        
+        // Ambil Trending Articles (berdasarkan dilihat)
+        $sql = "SELECT a.*, k.nama AS kategori_nama 
+                FROM artikel a 
+                LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+                $baseWhere 
+                ORDER BY a.dilihat DESC 
+                LIMIT 4";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $trendingArticles = $stmt->fetchAll();
+        
+        // Ambil Editor's Choice (6 artikel terbaru)
+        $sql = "SELECT a.*, k.nama AS kategori_nama 
+                FROM artikel a 
+                LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+                $baseWhere 
+                ORDER BY a.published_at DESC, a.created_at DESC 
+                LIMIT 6";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $editorChoiceArticles = $stmt->fetchAll();
+        
+        // Ambil artikel untuk list (jika ada filter/search/pagination)
         if ($kategori_id || $search || $page > 1) {
-            $articles = $articleModel->getList([
-                'status' => 'published',
-                'kategori_id' => $kategori_id,
-                'search' => $search,
-                'page' => $page,
-                'limit' => $limit,
-                'order_by' => 'published_at',
-                'order_dir' => 'DESC'
-            ]);
-
-            $totalArticles = $articleModel->getCount([
-                'status' => 'published',
-                'kategori_id' => $kategori_id,
-                'search' => $search
-            ]);
-
+            $offset = ($page - 1) * $limit;
+            $sql = "SELECT a.*, k.nama AS kategori_nama 
+                    FROM artikel a 
+                    LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+                    $baseWhere 
+                    ORDER BY a.published_at DESC, a.created_at DESC 
+                    LIMIT ? OFFSET ?";
+            $stmt = $pdo->prepare($sql);
+            $listParams = array_merge($params, [$limit, $offset]);
+            $stmt->execute($listParams);
+            $articles = $stmt->fetchAll();
+            
+            // Hitung total untuk pagination
+            $countSql = "SELECT COUNT(*) FROM artikel a $baseWhere";
+            $countStmt = $pdo->prepare($countSql);
+            $countStmt->execute($params);
+            $totalArticles = (int)$countStmt->fetchColumn();
             $totalPages = max(1, ceil($totalArticles / $limit));
         }
-
-        // Ambil kategori untuk filter
-        $categoriesStmt = $pdo->query("SELECT * FROM kategori_artikel ORDER BY nama");
-        $categories = $categoriesStmt->fetchAll();
-
-        // Ambil artikel populer
-        $popularArticles = $articleModel->getPopularArticles(5);
+        
+        // Ambil kategori
+        $stmt = $pdo->query("SELECT * FROM kategori_artikel ORDER BY nama");
+        $categories = $stmt->fetchAll();
+        
+        // Ambil artikel populer (5 artikel)
+        $sql = "SELECT a.*, k.nama AS kategori_nama 
+                FROM artikel a 
+                LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
+                WHERE a.status = 'published' AND (a.published_at IS NULL OR a.published_at <= NOW())
+                ORDER BY a.dilihat DESC 
+                LIMIT 5";
+        $stmt = $pdo->query($sql);
+        $popularArticles = $stmt->fetchAll();
+        
     } catch (Exception $e) {
         $dbError = true;
         $errorMessage = "Error: " . $e->getMessage();

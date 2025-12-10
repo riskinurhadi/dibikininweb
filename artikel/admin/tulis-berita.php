@@ -8,64 +8,115 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 }
 
 require_once __DIR__ . '/../../koneksi.php';
-require_once __DIR__ . '/../../database/ArticleModel.php';
 
 $pageTitle = 'Tulis Berita Baru';
 $error = '';
 $success = '';
 
-// 2. Logic Ambil Kategori
+// Helper Functions
+function generateSlug($judul, $pdo) {
+    $slug = strtolower(trim($judul));
+    $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
+    $slug = preg_replace('/[\s-]+/', '-', $slug);
+    $slug = trim($slug, '-');
+    
+    // Cek apakah slug sudah ada
+    $originalSlug = $slug;
+    $counter = 1;
+    while (true) {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM artikel WHERE slug = ?");
+        $stmt->execute([$slug]);
+        if ($stmt->fetchColumn() == 0) {
+            break;
+        }
+        $slug = $originalSlug . '-' . $counter;
+        $counter++;
+    }
+    return $slug;
+}
+
+function generateExcerpt($konten, $length = 160) {
+    $text = strip_tags($konten);
+    $text = preg_replace('/\s+/', ' ', $text);
+    if (strlen($text) <= $length) {
+        return $text;
+    }
+    $excerpt = substr($text, 0, $length);
+    $lastSpace = strrpos($excerpt, ' ');
+    if ($lastSpace !== false) {
+        $excerpt = substr($excerpt, 0, $lastSpace);
+    }
+    return $excerpt . '...';
+}
+
+function calculateReadingTime($konten) {
+    $wordCount = str_word_count(strip_tags($konten));
+    $readingTime = ceil($wordCount / 200);
+    return max(1, $readingTime);
+}
+
+// Ambil Kategori
 $kategories = [];
-if (isset($pdo)) {
+if ($pdo) {
     try {
         $stmt = $pdo->query("SELECT * FROM kategori_artikel ORDER BY nama");
         $kategories = $stmt->fetchAll();
     } catch (Exception $e) { /* Ignore */ }
 }
 
-// 3. Logic Proses Simpan
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Proses Simpan Artikel
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
     try {
-        $articleModel = new ArticleModel($pdo);
-        
         // Ambil data form
-        $judul      = trim($_POST['judul'] ?? '');
-        $konten     = $_POST['konten'] ?? '';
-        $ringkasan  = trim($_POST['ringkasan'] ?? '');
-        $kategori_id= !empty($_POST['kategori_id']) ? (int)$_POST['kategori_id'] : null;
-        $penulis    = trim($_POST['penulis'] ?? 'Admin');
-        $gambar     = trim($_POST['gambar'] ?? '');
+        $judul = trim($_POST['judul'] ?? '');
+        $konten = $_POST['konten'] ?? '';
+        $ringkasan = trim($_POST['ringkasan'] ?? '');
+        $kategori_id = !empty($_POST['kategori_id']) ? (int)$_POST['kategori_id'] : null;
+        $penulis = trim($_POST['penulis'] ?? 'Admin');
+        $gambar = trim($_POST['gambar'] ?? '');
         
-        // Tentukan status berdasarkan tombol yang diklik (name="action")
-        $action = $_POST['action'] ?? 'draft'; 
+        // Tentukan status
+        $action = $_POST['action'] ?? 'draft';
         $status = ($action === 'publish') ? 'published' : 'draft';
-
+        
+        // Validasi
         if (empty($judul) || empty($konten)) {
             $error = 'Judul dan Konten wajib diisi!';
         } else {
-            $slug = $articleModel->generateSlug($judul);
+            // Generate slug
+            $slug = generateSlug($judul, $pdo);
+            
+            // Generate ringkasan jika kosong
             if (empty($ringkasan)) {
-                $ringkasan = $articleModel->generateExcerpt($konten);
+                $ringkasan = generateExcerpt($konten);
             }
-
+            
+            // Hitung waktu baca
+            $waktu_baca = calculateReadingTime($konten);
+            
+            // Tentukan published_at
             $published_at = ($status === 'published') ? date('Y-m-d H:i:s') : null;
-
-            $data = [
-                'judul'         => $judul,
-                'slug'          => $slug,
-                'konten'        => $konten,
-                'ringkasan'     => $ringkasan,
-                'gambar'        => $gambar ?: null,
-                'kategori_id'   => $kategori_id,
-                'penulis'       => $penulis,
-                'status'        => $status,
-                'waktu_baca'    => $articleModel->calculateReadingTime($konten),
-                'published_at'  => $published_at
-            ];
-
-            if ($articleModel->create($data)) {
+            
+            // Insert ke database
+            $sql = "INSERT INTO artikel (judul, slug, konten, ringkasan, gambar, kategori_id, penulis, status, waktu_baca, published_at, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+            
+            $stmt = $pdo->prepare($sql);
+            $result = $stmt->execute([
+                $judul,
+                $slug,
+                $konten,
+                $ringkasan,
+                $gambar ?: null,
+                $kategori_id,
+                $penulis,
+                $status,
+                $waktu_baca,
+                $published_at
+            ]);
+            
+            if ($result) {
                 $success = ($status === 'published') ? 'Artikel berhasil dipublikasikan!' : 'Draft berhasil disimpan!';
-                // Redirect jika publish, stay jika draft
                 if ($status === 'published') {
                     echo "<script>alert('Berhasil dipublikasikan!'); window.location='semua-berita.php';</script>";
                     exit;
