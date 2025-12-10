@@ -63,7 +63,7 @@ include 'koneksi.php';
                   <a class="nav-link" href="#Kontak">Kontak</a>
                 </li>
               </ul>
-              <a href="https://wa.me/6282371869118" class="btn btn-primary-custom text-light text-end" style="height: 50px;">Hubungi Kami</a>
+              <a href="https://dibikininweb.com/artikel/" class="btn btn-primary-custom text-light text-end" style="height: 50px;">Blog</a>
             </div>
           </nav>
         </div>

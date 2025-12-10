@@ -133,7 +133,7 @@ function formatDate($date) {
     <nav class="article-navbar navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="index.php">
-                <i class="bi  me-2"></i>
+                <i class=""></i>
                 <span>Dibikinin.Artikel</span>
             </a>
             
@@ -168,12 +168,12 @@ function formatDate($date) {
     </nav>
     
     <!-- Page Header -->
-    <div class="page-header-banner">
+    <!-- <div class="page-header-banner">
         <div class="container">
             <h1>Artikel & Berita</h1>
             <p>Baca artikel terbaru seputar web development, teknologi, dan tips digital marketing</p>
         </div>
-    </div>
+    </div> -->
 
     <!-- Main Content -->
     <div class="container-fluid py-5" style="background: #f8f9fa;">
