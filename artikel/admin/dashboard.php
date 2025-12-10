@@ -27,32 +27,33 @@ $recentArticles = [];
 $popularArticles = [];
 
 // Query stats jika database tersedia
+$errorMessage = '';
 if ($pdo) {
     try {
         // Total artikel
-        $stmt = $pdo->query("SELECT COUNT(*) FROM artikel");
-        $result = $stmt->fetchColumn();
-        $stats['total_artikel'] = (int)(($result !== false && $result !== null) ? $result : 0);
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel");
+        $row = $stmt->fetch();
+        $stats['total_artikel'] = isset($row['total']) ? (int)$row['total'] : 0;
         
         // Artikel published
-        $stmt = $pdo->query("SELECT COUNT(*) FROM artikel WHERE status = 'published'");
-        $result = $stmt->fetchColumn();
-        $stats['artikel_published'] = (int)(($result !== false && $result !== null) ? $result : 0);
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'published'");
+        $row = $stmt->fetch();
+        $stats['artikel_published'] = isset($row['total']) ? (int)$row['total'] : 0;
         
         // Artikel draft
-        $stmt = $pdo->query("SELECT COUNT(*) FROM artikel WHERE status = 'draft'");
-        $result = $stmt->fetchColumn();
-        $stats['artikel_draft'] = (int)(($result !== false && $result !== null) ? $result : 0);
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'draft'");
+        $row = $stmt->fetch();
+        $stats['artikel_draft'] = isset($row['total']) ? (int)$row['total'] : 0;
         
         // Total views
-        $stmt = $pdo->query("SELECT COALESCE(SUM(dilihat), 0) FROM artikel");
-        $result = $stmt->fetchColumn();
-        $stats['total_views'] = (int)(($result !== false && $result !== null) ? $result : 0);
+        $stmt = $pdo->query("SELECT COALESCE(SUM(dilihat), 0) as total FROM artikel");
+        $row = $stmt->fetch();
+        $stats['total_views'] = isset($row['total']) ? (int)$row['total'] : 0;
         
         // Artikel minggu ini
-        $stmt = $pdo->query("SELECT COUNT(*) FROM artikel WHERE status = 'published' AND YEARWEEK(published_at) = YEARWEEK(CURDATE())");
-        $result = $stmt->fetchColumn();
-        $stats['artikel_minggu_ini'] = (int)(($result !== false && $result !== null) ? $result : 0);
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel WHERE status = 'published' AND YEARWEEK(published_at) = YEARWEEK(CURDATE())");
+        $row = $stmt->fetch();
+        $stats['artikel_minggu_ini'] = isset($row['total']) ? (int)$row['total'] : 0;
         
         // Artikel terbaru
         $stmt = $pdo->query("SELECT a.*, k.nama AS kategori_nama 
@@ -72,6 +73,10 @@ if ($pdo) {
         $popularArticles = $stmt->fetchAll() ?: [];
         
     } catch (Exception $e) {
+        // Tampilkan error untuk debugging
+        $errorMessage = 'Error: ' . $e->getMessage();
+        error_log("Dashboard Error: " . $e->getMessage());
+        
         // Pastikan semua key tetap terdefinisi jika error
         $stats['total_artikel'] = 0;
         $stats['artikel_published'] = 0;
@@ -82,6 +87,7 @@ if ($pdo) {
         $popularArticles = [];
     }
 } else {
+    $errorMessage = 'Koneksi database tidak tersedia';
     // Jika $pdo tidak tersedia, pastikan semua key terdefinisi
     $stats['total_artikel'] = 0;
     $stats['artikel_published'] = 0;
@@ -212,6 +218,26 @@ $pageTitle = 'Dashboard';
         <?php include 'includes/header.php'; ?>
         
         <div class="content-body">
+            <?php if ($errorMessage): ?>
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Peringatan:</strong> <?php echo htmlspecialchars($errorMessage); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+            
+            <!-- Debug Info (Hapus setelah fix) -->
+            <?php if (isset($_GET['debug'])): ?>
+                <div class="alert alert-info">
+                    <strong>Debug Info:</strong><br>
+                    Total Artikel: <?php var_dump($stats['total_artikel']); ?><br>
+                    Published: <?php var_dump($stats['artikel_published']); ?><br>
+                    Draft: <?php var_dump($stats['artikel_draft']); ?><br>
+                    Views: <?php var_dump($stats['total_views']); ?><br>
+                    PDO Available: <?php echo $pdo ? 'Yes' : 'No'; ?>
+                </div>
+            <?php endif; ?>
+            
             <!-- Stat Cards -->
             <div class="row g-3 mb-4">
                 <div class="col-lg-3 col-md-6">
