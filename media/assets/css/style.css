@@ -139,6 +139,10 @@ body {
 
 .breadcrumb-section .breadcrumb-item.active {
     color: var(--text-primary);
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* ============================================
@@ -263,6 +267,31 @@ body {
     color: var(--text-primary);
     padding-bottom: 15px;
     border-bottom: 2px solid var(--primary-color);
+}
+
+.btn-back-article {
+    display: block;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(24, 167, 210, 0.3);
+}
+
+.btn-back-article:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(24, 167, 210, 0.4);
+    color: var(--white);
+}
+
+.btn-back-article i {
+    font-size: 16px;
 }
 
 .featured-item {

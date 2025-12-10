@@ -233,11 +233,6 @@ if ($pdo) {
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </ul>
-                <div class="d-flex">
-                    <a href="../index.php" class="btn btn-outline-light btn-sm">
-                        <i class="bi bi-arrow-left me-1"></i>Kembali ke Home
-                    </a>
-                </div>
             </div>
         </div>
     </nav>
@@ -249,7 +244,12 @@ if ($pdo) {
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
                     <li class="breadcrumb-item"><a href="index.php">Artikel</a></li>
-                    <li class="breadcrumb-item active"><?php echo htmlspecialchars($article['judul']); ?></li>
+                    <li class="breadcrumb-item active" title="<?php echo htmlspecialchars($article['judul']); ?>">
+                        <?php 
+                        $judul = htmlspecialchars($article['judul']);
+                        echo strlen($judul) > 50 ? substr($judul, 0, 50) . '...' : $judul; 
+                        ?>
+                    </li>
                 </ol>
             </nav>
         </div>
@@ -332,8 +332,9 @@ if ($pdo) {
             
             <!-- Sidebar -->
             <div class="col-lg-4">
-                <div class="text-center mb-4">
-                    <a href="index.php" class="btn btn-primary">
+                <!-- Back Button -->
+                <div class="sidebar-card mb-4">
+                    <a href="index.php" class="btn-back-article w-100">
                         <i class="bi bi-arrow-left me-2"></i>Kembali ke Daftar Artikel
                     </a>
                 </div>
