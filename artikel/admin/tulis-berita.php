@@ -272,6 +272,80 @@ if ($pdo) {
         .note-btn:hover {
             background: #e9ecef;
         }
+        
+        /* Fix untuk dropdown Summernote */
+        .note-toolbar .note-btn-group {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .note-dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            min-width: 160px;
+            padding: 5px 0;
+            margin: 2px 0 0;
+            background-color: #fff !important;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+            z-index: 9999 !important;
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .note-dropdown-menu.open,
+        .note-btn-group.open .note-dropdown-menu {
+            display: block !important;
+        }
+        
+        .note-dropdown-menu > li {
+            list-style: none;
+        }
+        
+        .note-dropdown-menu > li > a {
+            display: block;
+            padding: 8px 20px;
+            clear: both;
+            font-weight: normal;
+            line-height: 1.42857143;
+            color: #333;
+            white-space: nowrap;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .note-dropdown-menu > li > a:hover,
+        .note-dropdown-menu > li > a:focus {
+            color: #262626;
+            background-color: #f5f5f5;
+        }
+        
+        .note-btn-group.open > .note-dropdown-toggle {
+            background-color: #e9ecef;
+        }
+        
+        /* Pastikan dropdown bisa diklik */
+        .note-fontname,
+        .note-fontsize,
+        .note-color,
+        .note-para {
+            cursor: pointer;
+        }
+        
+        .note-fontname .note-dropdown-toggle,
+        .note-fontsize .note-dropdown-toggle,
+        .note-color .note-dropdown-toggle,
+        .note-para .note-dropdown-toggle {
+            cursor: pointer;
+        }
+        
+        /* Pastikan toolbar tidak overflow */
+        .note-toolbar {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
@@ -448,17 +522,103 @@ if ($pdo) {
                             ['fontsize', ['fontsize']],
                             ['color', ['color']],
                             ['para', ['ul', 'ol', 'paragraph']],
+                            ['height', ['height']],
                             ['table', ['table']],
                             ['insert', ['link', 'picture', 'video']],
                             ['view', ['fullscreen', 'codeview', 'help']]
                         ],
+                        followingToolbar: false,
+                        popatmouse: true,
                         fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Inter', 'Times New Roman', 'Verdana'],
                         fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '36', '48'],
+                        styleTags: ['p', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+                        popover: {
+                            image: [
+                                ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+                                ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                                ['remove', ['removeMedia']]
+                            ],
+                            link: [
+                                ['link', ['linkDialogShow', 'unlink']]
+                            ],
+                            table: [
+                                ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                                ['delete', ['deleteRow', 'deleteCol', 'deleteTable']]
+                            ]
+                        },
                         callbacks: {
                             onInit: function() {
                                 jQuery('.note-editor').css('border-radius', '8px');
                             }
                         }
+                    });
+                    
+                    // Fix untuk dropdown setelah editor diinisialisasi
+                    setTimeout(function() {
+                        // Pastikan semua dropdown menu memiliki styling yang benar
+                        jQuery('.note-dropdown-menu').each(function() {
+                            var $menu = jQuery(this);
+                            if ($menu.css('display') === 'none' || !$menu.parent().hasClass('open')) {
+                                $menu.css({
+                                    'display': 'none',
+                                    'z-index': '9999',
+                                    'position': 'absolute'
+                                });
+                            }
+                        });
+                        
+                        // Fix untuk event click pada semua dropdown toggle
+                        jQuery('.note-toolbar').off('mousedown', '.note-btn-group .note-dropdown-toggle')
+                            .on('mousedown', '.note-btn-group .note-dropdown-toggle', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                
+                                var $toggle = jQuery(this);
+                                var $group = $toggle.closest('.note-btn-group');
+                                var $menu = $group.find('.note-dropdown-menu');
+                                
+                                // Tutup semua dropdown lain
+                                jQuery('.note-btn-group').not($group).removeClass('open');
+                                jQuery('.note-dropdown-menu').not($menu).css('display', 'none').removeClass('open');
+                                
+                                // Toggle dropdown ini
+                                if ($group.hasClass('open')) {
+                                    $group.removeClass('open');
+                                    $menu.css('display', 'none').removeClass('open');
+                                } else {
+                                    $group.addClass('open');
+                                    $menu.css({
+                                        'display': 'block',
+                                        'z-index': '9999',
+                                        'position': 'absolute'
+                                    }).addClass('open');
+                                }
+                                
+                                return false;
+                            });
+                        
+                        // Fix untuk event click pada dropdown item - biarkan Summernote handle
+                        jQuery('.note-dropdown-menu').off('click', 'a').on('click', 'a', function(e) {
+                            var $item = jQuery(this);
+                            var $group = $item.closest('.note-btn-group');
+                            
+                            // Tutup dropdown setelah action
+                            setTimeout(function() {
+                                $group.removeClass('open');
+                                $group.find('.note-dropdown-menu').css('display', 'none').removeClass('open');
+                            }, 200);
+                        });
+                        
+                        // Tutup dropdown saat klik di luar
+                        jQuery(document).off('click.summernote-outside').on('click.summernote-outside', function(e) {
+                            if (!jQuery(e.target).closest('.note-btn-group').length) {
+                                jQuery('.note-btn-group').removeClass('open');
+                                jQuery('.note-dropdown-menu').css('display', 'none').removeClass('open');
+                            }
+                        });
+                        
+                        console.log('Dropdown fix diterapkan');
+                    }, 800);
                     });
                     console.log('Summernote editor berhasil diinisialisasi');
                 } else {
