@@ -30,7 +30,7 @@ $popularArticles = [];
 $errorMessage = '';
 if ($pdo) {
     try {
-        // Total artikel
+        // Total artikel - menggunakan metode yang sama dengan test-db.php
         $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel");
         $row = $stmt->fetch();
         $stats['total_artikel'] = isset($row['total']) ? (int)$row['total'] : 0;
@@ -98,14 +98,14 @@ if ($pdo) {
     $popularArticles = [];
 }
 
-// Pastikan semua key selalu terdefinisi (double check)
-$stats['total_artikel'] = isset($stats['total_artikel']) ? (int)$stats['total_artikel'] : 0;
-$stats['artikel_published'] = isset($stats['artikel_published']) ? (int)$stats['artikel_published'] : 0;
-$stats['artikel_draft'] = isset($stats['artikel_draft']) ? (int)$stats['artikel_draft'] : 0;
-$stats['total_views'] = isset($stats['total_views']) ? (int)$stats['total_views'] : 0;
-$stats['artikel_minggu_ini'] = isset($stats['artikel_minggu_ini']) ? (int)$stats['artikel_minggu_ini'] : 0;
-$recentArticles = isset($recentArticles) && is_array($recentArticles) ? $recentArticles : [];
-$popularArticles = isset($popularArticles) && is_array($popularArticles) ? $popularArticles : [];
+// Pastikan semua key selalu terdefinisi - JANGAN override jika sudah ada nilai
+if (!isset($stats['total_artikel'])) $stats['total_artikel'] = 0;
+if (!isset($stats['artikel_published'])) $stats['artikel_published'] = 0;
+if (!isset($stats['artikel_draft'])) $stats['artikel_draft'] = 0;
+if (!isset($stats['total_views'])) $stats['total_views'] = 0;
+if (!isset($stats['artikel_minggu_ini'])) $stats['artikel_minggu_ini'] = 0;
+if (!isset($recentArticles) || !is_array($recentArticles)) $recentArticles = [];
+if (!isset($popularArticles) || !is_array($popularArticles)) $popularArticles = [];
 
 // Format angka
 function formatNumber($number) {
@@ -230,11 +230,27 @@ $pageTitle = 'Dashboard';
             <?php if (isset($_GET['debug'])): ?>
                 <div class="alert alert-info">
                     <strong>Debug Info:</strong><br>
-                    Total Artikel: <?php var_dump($stats['total_artikel']); ?><br>
-                    Published: <?php var_dump($stats['artikel_published']); ?><br>
-                    Draft: <?php var_dump($stats['artikel_draft']); ?><br>
-                    Views: <?php var_dump($stats['total_views']); ?><br>
-                    PDO Available: <?php echo $pdo ? 'Yes' : 'No'; ?>
+                    PDO Available: <?php echo $pdo ? 'Yes' : 'No'; ?><br>
+                    Error Message: <?php echo htmlspecialchars($errorMessage ?: 'None'); ?><br>
+                    <hr>
+                    <strong>Stats Values:</strong><br>
+                    Total Artikel: <?php echo $stats['total_artikel']; ?> (type: <?php echo gettype($stats['total_artikel']); ?>)<br>
+                    Published: <?php echo $stats['artikel_published']; ?> (type: <?php echo gettype($stats['artikel_published']); ?>)<br>
+                    Draft: <?php echo $stats['artikel_draft']; ?> (type: <?php echo gettype($stats['artikel_draft']); ?>)<br>
+                    Views: <?php echo $stats['total_views']; ?> (type: <?php echo gettype($stats['total_views']); ?>)<br>
+                    <hr>
+                    <strong>Raw Query Test:</strong><br>
+                    <?php
+                    if ($pdo) {
+                        try {
+                            $testStmt = $pdo->query("SELECT COUNT(*) as total FROM artikel");
+                            $testRow = $testStmt->fetch(PDO::FETCH_ASSOC);
+                            echo "Direct Query Result: " . ($testRow['total'] ?? 'NULL') . "<br>";
+                        } catch (Exception $e) {
+                            echo "Query Error: " . $e->getMessage();
+                        }
+                    }
+                    ?>
                 </div>
             <?php endif; ?>
             

@@ -7,13 +7,21 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Ambil statistik
-$stats = [
-    'semua_berita' => 0,
-    'komentar' => 0
-];
+// Ambil statistik - JANGAN override jika sudah ada
+if (!isset($stats) || !is_array($stats)) {
+    $stats = [];
+}
 
-if (isset($pdo) && $pdo) {
+// Set default untuk sidebar jika belum ada
+if (!isset($stats['semua_berita'])) {
+    $stats['semua_berita'] = 0;
+}
+if (!isset($stats['komentar'])) {
+    $stats['komentar'] = 0;
+}
+
+// Update statistik sidebar jika belum di-set dan database tersedia
+if (isset($pdo) && $pdo && $stats['semua_berita'] == 0) {
     try {
         $stmt = $pdo->query("SELECT COUNT(*) as total FROM artikel");
         $result = $stmt->fetch();
