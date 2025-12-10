@@ -133,8 +133,8 @@ function formatDate($date) {
     <nav class="article-navbar navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="index.php">
-                <i class="bi bi-newspaper me-2"></i>
-                <span>Artikel & Berita</span>
+                <i class="bi  me-2"></i>
+                <span>Dibikinin.Artikel</span>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -145,7 +145,7 @@ function formatDate($date) {
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link" href="index.php">
-                            <i class="bi bi-house me-1"></i>Semua Artikel
+                            <i class="bi me-1"></i>Semua Artikel
                         </a>
                     </li>
                     <?php if (!empty($categories)): ?>
