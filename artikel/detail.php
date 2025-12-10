@@ -19,12 +19,11 @@ $relatedArticles = [];
 // Query artikel jika database tersedia
 if ($pdo) {
     try {
-        // Ambil artikel berdasarkan slug
+        // Ambil artikel berdasarkan slug - Sederhanakan query
         $sql = "SELECT a.*, k.nama AS kategori_nama 
                 FROM artikel a 
                 LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
-                WHERE a.slug = ? AND a.status = 'published' 
-                AND (a.published_at IS NULL OR a.published_at <= NOW())";
+                WHERE a.slug = ? AND a.status = 'published'";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$slug]);
         $article = $stmt->fetch();
@@ -46,8 +45,7 @@ if ($pdo) {
                            WHERE a.kategori_id = ? 
                            AND a.id != ? 
                            AND a.status = 'published' 
-                           AND (a.published_at IS NULL OR a.published_at <= NOW())
-                           ORDER BY a.published_at DESC 
+                           ORDER BY COALESCE(a.published_at, a.created_at) DESC 
                            LIMIT 3";
             $relatedStmt = $pdo->prepare($relatedSql);
             $relatedStmt->execute([$article['kategori_id'], $article['id']]);

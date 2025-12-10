@@ -18,15 +18,16 @@ $categories = [];
 // Query artikel jika database tersedia
 if ($pdo) {
     try {
-        // Query dasar untuk artikel published
-        $baseWhere = "WHERE status = 'published' AND (published_at IS NULL OR published_at <= NOW())";
+        // Query dasar untuk artikel published - Sederhanakan query
+        // Hanya cek status = 'published', tanpa kondisi published_at yang kompleks
+        $baseWhere = "WHERE a.status = 'published'";
         
         // Ambil artikel utama (terbaru)
         $sql = "SELECT a.*, k.nama AS kategori_nama 
                 FROM artikel a 
                 LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
                 $baseWhere 
-                ORDER BY published_at DESC, created_at DESC 
+                ORDER BY COALESCE(a.published_at, a.created_at) DESC 
                 LIMIT 1";
         $stmt = $pdo->query($sql);
         $mainArticle = $stmt->fetch();
@@ -36,7 +37,7 @@ if ($pdo) {
                 FROM artikel a 
                 LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
                 $baseWhere 
-                ORDER BY published_at DESC, created_at DESC 
+                ORDER BY COALESCE(a.published_at, a.created_at) DESC 
                 LIMIT 3 OFFSET 1";
         $stmt = $pdo->query($sql);
         $nextArticles = $stmt->fetchAll();
@@ -47,7 +48,7 @@ if ($pdo) {
                 FROM artikel a 
                 LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
                 $baseWhere 
-                ORDER BY published_at DESC, created_at DESC 
+                ORDER BY COALESCE(a.published_at, a.created_at) DESC 
                 LIMIT 4";
         $stmt = $pdo->query($sql);
         $featuredArticles = $stmt->fetchAll();
@@ -57,7 +58,7 @@ if ($pdo) {
                 FROM artikel a 
                 LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
                 $baseWhere 
-                ORDER BY dilihat DESC 
+                ORDER BY a.dilihat DESC 
                 LIMIT 4";
         $stmt = $pdo->query($sql);
         $trendingArticles = $stmt->fetchAll();
@@ -67,7 +68,7 @@ if ($pdo) {
                 FROM artikel a 
                 LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
                 $baseWhere 
-                ORDER BY published_at DESC, created_at DESC 
+                ORDER BY COALESCE(a.published_at, a.created_at) DESC 
                 LIMIT 6";
         $stmt = $pdo->query($sql);
         $editorChoiceArticles = $stmt->fetchAll();
@@ -77,7 +78,7 @@ if ($pdo) {
                 FROM artikel a 
                 LEFT JOIN kategori_artikel k ON a.kategori_id = k.id 
                 $baseWhere 
-                ORDER BY dilihat DESC 
+                ORDER BY a.dilihat DESC 
                 LIMIT 5";
         $stmt = $pdo->query($sql);
         $popularArticles = $stmt->fetchAll();
@@ -87,7 +88,8 @@ if ($pdo) {
         $categories = $stmt->fetchAll();
         
     } catch (Exception $e) {
-        // Error handling
+        // Error handling - log error untuk debugging
+        error_log("Artikel Index Error: " . $e->getMessage());
     }
 }
 
